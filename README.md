@@ -7,8 +7,8 @@ Supported tags and respective `Dockerfile` links:
 
 ### 1. Set environment variables
 
-Environment Variables     | Description                                       | Required
-------------------------- | ------------------------------------------------- | ---------------------
+Environment Variables     | Description                                       |
+------------------------- | ------------------------------------------------- |
 ACCESS_LOG                | Send access logs to /dev/stdout. (default: true) | 
 CONTENT_ENCODING          | Compress response data if the request allows. (default: true) |
 
