@@ -23,7 +23,7 @@ func init() {
 	if b, err := strconv.ParseBool(os.Getenv("ACCESS_LOG")); err == nil {
 		accessLog = b
 	}
-	contentEncoding := false
+	contentEncoding := true
 	if b, err := strconv.ParseBool(os.Getenv("CONTENT_ENCODING")); err == nil {
 		contentEncoding = b
 	}
