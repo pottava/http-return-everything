@@ -23,7 +23,7 @@ func main() {
 
 	http.HandleFunc("/version", func(w http.ResponseWriter, r *http.Request) {
 		if len(version) > 0 && len(date) > 0 {
-			fmt.Fprintf(w, "version: %s (built at %s)", version, date)
+			fmt.Fprintf(w, "version: %s (built at %s)\n", version, date)
 			return
 		}
 		w.WriteHeader(http.StatusOK)
@@ -71,30 +71,35 @@ func req(r *http.Request) (req map[string]interface{}) {
 }
 
 func envs(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprint(w, os.Getenv(r.URL.Path[len("/envs/"):]))
+	key := r.URL.Path[len("/envs/"):]
+	if len(key) == 0 {
+		lib.RenderJSON(w, os.Environ(), nil)
+		return
+	}
+	fmt.Fprintln(w, os.Getenv(key))
 }
 
 func request(w http.ResponseWriter, r *http.Request) {
 	key := strings.ToLower(r.URL.Path[len("/request/"):])
 	switch {
 	case strings.HasPrefix(key, "proto"):
-		fmt.Fprint(w, r.Proto)
+		fmt.Fprintln(w, r.Proto)
 	case strings.HasPrefix(key, "method"):
-		fmt.Fprint(w, r.Method)
+		fmt.Fprintln(w, r.Method)
 	case strings.HasPrefix(key, "host"):
-		fmt.Fprint(w, r.Host)
+		fmt.Fprintln(w, r.Host)
 	case strings.HasPrefix(key, "remoteaddr"):
 		fallthrough
 	case strings.HasPrefix(key, "addr"):
 		fallthrough
 	case strings.HasPrefix(key, "address"):
-		fmt.Fprint(w, r.RemoteAddr)
+		fmt.Fprintln(w, r.RemoteAddr)
 	case strings.HasPrefix(key, "requesturi"):
 		fallthrough
 	case strings.HasPrefix(key, "uri"):
 		fallthrough
 	case strings.HasPrefix(key, "url"):
-		fmt.Fprint(w, r.RequestURI)
+		fmt.Fprintln(w, r.RequestURI)
 	case strings.HasPrefix(key, "headers"):
 		if len(key) <= len("headers/") {
 			lib.RenderJSON(w, r.Header, nil)
