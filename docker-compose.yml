@@ -1,0 +1,14 @@
+version: "2"
+
+services:
+  app:
+    image: pottava/golang:1.8-builder
+    command: go run /go/src/github.com/pottava/http-return-everything/main.go
+    ports:
+      - 80:80
+    volumes:
+      - .:/go/src/github.com/pottava/http-return-everything
+    environment:
+      - ACCESS_LOG
+      - CONTENT_ENCODING
+    container_name: app
