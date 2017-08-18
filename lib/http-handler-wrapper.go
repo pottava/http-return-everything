@@ -15,12 +15,12 @@ func Wrap(f func(w http.ResponseWriter, r *http.Request)) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		proc := time.Now()
 		addr := r.RemoteAddr
-		if ip, found := header(r, "X-Forwarded-For"); found {
-			addr = ip
+		if ip, found := Header(r, "X-Forwarded-For"); found {
+			addr = ip[0]
 		}
 		ioWriter := w.(io.Writer)
-		if encodings, found := header(r, "Accept-Encoding"); found && Config.ContentEncoding {
-			for _, encoding := range splitCsvLine(encodings) {
+		if encodings, found := Header(r, "Accept-Encoding"); found && Config.ContentEncoding {
+			for _, encoding := range splitCsvLine(encodings[0]) {
 				if encoding == "gzip" {
 					w.Header().Set("Content-Encoding", "gzip")
 					g := gzip.NewWriter(w)

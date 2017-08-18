@@ -3,6 +3,7 @@ package lib
 import (
 	"encoding/json"
 	"net/http"
+	"strings"
 )
 
 // RenderJSON write data as a json
@@ -18,20 +19,23 @@ func RenderJSON(w http.ResponseWriter, data interface{}, err error) {
 	w.Write(response)
 }
 
-func isInvalid(w http.ResponseWriter, err error) bool {
+func isInvalid(w http.ResponseWriter, err error) (invalid bool) {
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return true
 	}
-	return false
+	return
 }
 
-func header(r *http.Request, key string) (string, bool) {
+// Header retrive HTTP header values with specified key
+func Header(r *http.Request, key string) (values []string, found bool) {
 	if r.Header == nil {
-		return "", false
+		return
 	}
-	if candidate := r.Header[key]; len(candidate) > 0 {
-		return candidate[0], true
+	for k, v := range r.Header {
+		if strings.EqualFold(k, key) && len(v) > 0 {
+			return v, true
+		}
 	}
-	return "", false
+	return
 }
