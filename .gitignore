@@ -1,2 +1,3 @@
 dist/*
 docker-compose.override.yml
+*.yaml

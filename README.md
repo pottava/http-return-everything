@@ -28,6 +28,55 @@ check:
   container_name: check
 ```
 
+* with kubernetes-deployment.yaml
+
+```
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: my-app
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: my-app
+        version: v0.1.0
+    spec:
+      containers:
+      - name: api
+        image: pottava/http-re
+        imagePullPolicy: IfNotPresent
+        ports:
+        - protocol: TCP
+          containerPort: 80
+        env:
+        - name: APP_NODE_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: spec.nodeName
+        - name: APP_POD_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: APP_POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: APP_POD_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.podIP
+        - name: APP_POD_SERVICE_ACCOUNT
+          valueFrom:
+            fieldRef:
+              fieldPath: spec.serviceAccountName
+        readinessProbe:
+          httpGet:
+            path: /version
+            port: 80
+```
+
 ### 3. Make HTTP requests
 
 - GET /
