@@ -1,0 +1,5 @@
+generated/cmd
+generated/models
+generated/restapi/*
+!generated/restapi/configure_return_everything.go
+vendor

@@ -1,0 +1,15 @@
+version: "2"
+
+services:
+  api:
+    image: pottava/golang:1.9-builder
+    command: go run app/generated/cmd/return-everything-server/main.go --host 0.0.0.0 --port 8080
+    ports:
+      - 9001:8080
+    volumes:
+      - ..:/go/src/github.com/pottava/http-return-everything
+    environment:
+      - ACCESS_LOG
+      - CONTENT_ENCODING
+    working_dir: /go/src/github.com/pottava/http-return-everything
+    container_name: api

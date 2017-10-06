@@ -1,0 +1,211 @@
+swagger: '2.0'
+info:
+  title: return-everything
+  version: '1.0'
+  description: |
+    It returns environment variables, HTTP request headers and so on.
+consumes:
+  - application/json
+produces:
+  - application/json
+schemes:
+  - http
+host: localhost
+paths:
+  /:
+    get:
+      description: |
+        returns everything
+      operationId: getEverything
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/Everything'
+        default:
+          description: unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /app/:
+    get:
+      description: |
+        returns application information
+      operationId: getApp
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/Application'
+        default:
+          description: unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /app/envs/:
+    get:
+      description: |
+        returns environment variables
+      operationId: getAppEnvs
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: array
+            items:
+              type: string
+        default:
+          description: unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /host/:
+    get:
+      description: |
+        returns host information
+      operationId: getHost
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/Host'
+        default:
+          description: unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /req/:
+    get:
+      description: |
+        returns HTTP request information
+      operationId: getRequestInfo
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/HTTPRequest'
+        default:
+          description: unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+definitions:
+  Everything:
+    description: application context
+    required:
+      - app
+      - host
+      - req
+    properties:
+      app:
+        $ref: '#/definitions/Application'
+      host:
+        $ref: '#/definitions/Host'
+      req:
+        $ref: '#/definitions/HTTPRequest'
+  Application:
+    description: Application information
+    required:
+      - args
+      - envs
+      - grp
+      - user
+      - workdir
+    properties:
+      args:
+        description: Application's arguments
+        type: array
+        items:
+          type: string
+      envs:
+        description: Environment variables
+        type: array
+        items:
+          type: string
+      workdir:
+        description: Working directory
+        type: string
+      grp:
+        description: The group ID of the calling process
+        type: integer
+        format: int64
+      user:
+        description: The user ID of the calling process
+        type: integer
+        format: int64
+  Host:
+    description: Host information
+    required:
+      - name
+      - hosts
+      - resolv_conf
+    properties:
+      name:
+        description: Host name
+        type: string
+      hosts:
+        description: /etc/hosts
+        type: array
+        items:
+          type: string
+      resolv_conf:
+        description: /etc/resolv.conf
+        type: array
+        items:
+          type: string
+  HTTPRequest:
+    description: HTTP request information
+    required:
+      - protocol
+      - method
+      - host
+      - remote_addr
+      - uri
+      - headers
+      - form
+      - post_form
+    properties:
+      protocol:
+        description: HTTP Protocol
+        type: string
+      method:
+        description: HTTP Method
+        type: string
+        enum:
+          - get
+      host:
+        description: Host
+        type: string
+      remote_addr:
+        description: Remote address
+        type: string
+      uri:
+        description: URI
+        type: string
+        pattern: >-
+          ^((http[s]?):\/)?\/?([^:\/\s]+)((\/\w+)*\/)([\w\-\.]+[^#?\s]+)(.*)?(#[\w\-]+)?$
+      headers:
+        description: HTTP request headers
+        type: object
+        additionalProperties:
+          type: array
+          items:
+            type: string
+      form:
+        description: HTTP GET query parameters and the POST / PUT form data
+        type: object
+        additionalProperties:
+          type: array
+          items:
+            type: string
+      post_form:
+        description: 'Including only HTTP POST, PATCH or PUT body parameters'
+        type: object
+        additionalProperties:
+          type: array
+          items:
+            type: string
+  Error:
+    required:
+      - code
+      - message
+    properties:
+      code:
+        type: string
+      message:
+        type: string
