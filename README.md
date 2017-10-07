@@ -14,17 +14,18 @@ CONTENT_ENCODING          | Compress response data if the request allows. (defau
 
 ### 2. Run the application
 
-`$ docker run -d -p 80:80 pottava/http-re`
+`$ docker run -d -p 80:8080 pottava/http-re:1.0`
 
 * with docker-compose.yml:  
 
 ```
 check:
-  image: pottava/http-re
+  image: pottava/http-re:1.0
   ports:
-    - 80:80
+    - 80:8080
   environment:
     - ACCESS_LOG=false
+    - CONTENT_ENCODING=false
   container_name: check
 ```
 
@@ -41,15 +42,14 @@ spec:
     metadata:
       labels:
         app: my-app
-        version: v0.1.0
     spec:
       containers:
       - name: api
-        image: pottava/http-re
-        imagePullPolicy: IfNotPresent
+        image: pottava/http-re:1.0
+        imagePullPolicy: Always
         ports:
         - protocol: TCP
-          containerPort: 80
+          containerPort: 8080
         env:
         - name: APP_NODE_NAME
           valueFrom:
@@ -73,32 +73,32 @@ spec:
               fieldPath: spec.serviceAccountName
         readinessProbe:
           httpGet:
-            path: /version
-            port: 80
+            path: /health
+            port: 8080
 ```
 
-### 3. Make HTTP requests
+### 3. Make HTTP GET requests
 
 - GET /
 
 <img alt="" src="https://raw.githubusercontent.com/wiki/pottava/http-return-everything/images/result.png" style="max-width: 100%;">
 
-- GET /envs/
+- GET /app/envs/
 
 <img alt="" src="https://raw.githubusercontent.com/wiki/pottava/http-return-everything/images/envs.png" style="max-width: 100%;">
 
-- GET /envs/key
+- GET /app/envs/{env}
 
 <img alt="" src="https://raw.githubusercontent.com/wiki/pottava/http-return-everything/images/envs-key.png" style="max-width: 100%;">
 
-- GET /request/
+- GET /req/
 
 <img alt="" src="https://raw.githubusercontent.com/wiki/pottava/http-return-everything/images/request.png" style="max-width: 100%;">
 
-- GET /request/headers/
+- GET /req/headers/
 
 <img alt="" src="https://raw.githubusercontent.com/wiki/pottava/http-return-everything/images/request-headers.png" style="max-width: 100%;">
 
-- GET /request/headers/key
+- GET /req/headers/{header}
 
 <img alt="" src="https://raw.githubusercontent.com/wiki/pottava/http-return-everything/images/request-headers-key.png" style="max-width: 100%;">

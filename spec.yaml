@@ -1,7 +1,7 @@
 swagger: '2.0'
 info:
   title: return-everything
-  version: '1.0'
+  version: 1.0.0
   description: |
     It returns environment variables, HTTP request headers and so on.
 consumes:
@@ -23,28 +23,59 @@ paths:
           schema:
             $ref: '#/definitions/Everything'
         default:
-          description: unexpected error
+          description: Unexpected error
           schema:
             $ref: '#/definitions/Error'
-  /app/:
+  /app:
     get:
       description: |
         returns application information
       operationId: getApp
+      tags:
+        - application
       responses:
         '200':
           description: OK
           schema:
             $ref: '#/definitions/Application'
         default:
-          description: unexpected error
+          description: Unexpected error
           schema:
             $ref: '#/definitions/Error'
-  /app/envs/:
+  '/app/{key}':
+    get:
+      description: |
+        returns application specified information
+      operationId: getAppField
+      tags:
+        - application
+      parameters:
+        - name: key
+          in: path
+          description: Can specify a field
+          required: true
+          type: string
+          enum:
+            - args
+            - grp
+            - user
+            - workdir
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: string
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /app/envs:
     get:
       description: |
         returns environment variables
       operationId: getAppEnvs
+      tags:
+        - application
       responses:
         '200':
           description: OK
@@ -53,35 +84,199 @@ paths:
             items:
               type: string
         default:
-          description: unexpected error
+          description: Unexpected error
           schema:
             $ref: '#/definitions/Error'
-  /host/:
+  '/app/envs/{env}':
+    get:
+      description: |
+        returns an environment variable
+      operationId: getAppEnv
+      tags:
+        - application
+      parameters:
+        - name: env
+          in: path
+          description: Can specify an environment variable
+          required: true
+          type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: string
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /host:
     get:
       description: |
         returns host information
       operationId: getHost
+      tags:
+        - host
       responses:
         '200':
           description: OK
           schema:
             $ref: '#/definitions/Host'
         default:
-          description: unexpected error
+          description: Unexpected error
           schema:
             $ref: '#/definitions/Error'
-  /req/:
+  '/host/{key}':
+    get:
+      description: |
+        returns host specified information
+      operationId: getHostField
+      tags:
+        - host
+      parameters:
+        - name: key
+          in: path
+          description: Can specify a field
+          required: true
+          type: string
+          enum:
+            - name
+            - hosts
+            - resolv_conf
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /req:
     get:
       description: |
         returns HTTP request information
       operationId: getRequestInfo
+      tags:
+        - request
       responses:
         '200':
           description: OK
           schema:
             $ref: '#/definitions/HTTPRequest'
         default:
-          description: unexpected error
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  '/req/{key}':
+    get:
+      description: |
+        returns HTTP request specified information
+      operationId: getRequestField
+      tags:
+        - request
+      parameters:
+        - name: key
+          in: path
+          description: Can specify a field
+          required: true
+          type: string
+          enum:
+            - protocol
+            - method
+            - host
+            - remote_addr
+            - uri
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: string
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /req/headers:
+    get:
+      description: |
+        returns HTTP request headers
+      operationId: getRequestHeaders
+      tags:
+        - request
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            additionalProperties:
+              type: array
+              items:
+                type: string
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  '/req/headers/{header}':
+    get:
+      description: |
+        returns a specified HTTP request header
+      operationId: getRequestHeader
+      tags:
+        - request
+      parameters:
+        - name: header
+          in: path
+          description: Can specify an header
+          required: true
+          type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: array
+            items:
+              type: string
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /req/form:
+    get:
+      description: |
+        returns HTTP GET query parameters and the POST / PUT form data
+      operationId: getRequestForm
+      tags:
+        - request
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            additionalProperties:
+              type: array
+              items:
+                type: string
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /req/post_form:
+    get:
+      description: |
+        returns form data including only HTTP POST, PATCH or PUT body parameters
+      operationId: getRequestPostForm
+      tags:
+        - request
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            additionalProperties:
+              type: array
+              items:
+                type: string
+        default:
+          description: Unexpected error
           schema:
             $ref: '#/definitions/Error'
 definitions:

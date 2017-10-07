@@ -16,22 +16,6 @@ func getEverything(params operations.GetEverythingParams) middleware.Responder {
 	return operations.NewGetEverythingOK().WithPayload(everything(params.HTTPRequest))
 }
 
-func getApp(params operations.GetAppParams) middleware.Responder {
-	return operations.NewGetAppOK().WithPayload(everything(params.HTTPRequest).App)
-}
-
-func getAppEnvs(params operations.GetAppEnvsParams) middleware.Responder {
-	return operations.NewGetAppEnvsOK().WithPayload(everything(params.HTTPRequest).App.Envs)
-}
-
-func getHost(params operations.GetHostParams) middleware.Responder {
-	return operations.NewGetHostOK().WithPayload(everything(params.HTTPRequest).Host)
-}
-
-func getRequestInfo(params operations.GetRequestInfoParams) middleware.Responder {
-	return operations.NewGetRequestInfoOK().WithPayload(everything(params.HTTPRequest).Req)
-}
-
 func everything(r *http.Request) *models.Everything {
 	host, _ := os.Hostname()
 	wd, _ := os.Getwd()
