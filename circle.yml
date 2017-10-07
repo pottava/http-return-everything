@@ -10,12 +10,17 @@ dependencies:
   pre:
       # Prepare directories.
       - mkdir -p ~/cache "$PRIVATE_GOPATH/src/$IMPORT_PATH"
-      # Install go 1.8
+      # Install go 1.9
       - sudo rm -rf /usr/local/go
       - cd ~/cache && if [ ! -e go1.9.1.linux-amd64.tar.gz ]; then wget https://storage.googleapis.com/golang/go1.9.1.linux-amd64.tar.gz; fi
       - cd ~/cache && sudo tar -C /usr/local -xzf go1.9.1.linux-amd64.tar.gz
       - go version
+      # Install go-swagger 0.12.0
+      - cd $HOME/bin/ && if [ ! -e swagger_linux_amd64 ]; then wget https://github.com/go-swagger/go-swagger/releases/download/0.12.0/swagger_linux_amd64; fi
+      - chmod +x $HOME/bin/swagger_linux_amd64
+      - $HOME/bin/swagger_linux_amd64 version
       # Install test utils
+      - go get -u github.com/golang/dep/cmd/dep
       - go get github.com/golang/lint/golint
   post:
     - >
@@ -30,7 +35,9 @@ test:
     - cd ${REPO_ROOT} && go vet ./...
     - cd ${REPO_ROOT} && golint ./...
   override:
-    - cd ${REPO_ROOT} && go test -cover -bench -benchmem `go list ./... | grep -v /vendor/` -v
+    - cd ${REPO_ROOT} && $HOME/bin/swagger_linux_amd64 generate server -f spec.yaml -t app/generated
+    - cd ${REPO_ROOT}/app && dep ensure
+    - cd ${REPO_ROOT}/app && go test -cover -bench -benchmem `go list ./... | grep -v /vendor/` -v
 
 deployment:
   release:
@@ -39,5 +46,5 @@ deployment:
       - go get github.com/mitchellh/gox
       - go get github.com/tcnksm/ghr
       - export GODEBUG=netdns=go
-      - cd ${REPO_ROOT} && gox --osarch "linux/amd64 darwin/amd64 windows/amd64" -ldflags "-X main.version=$BUILD_VERSION -X main.date=$BUILD_DATE" -output "dist/${CIRCLE_PROJECT_REPONAME}_{{.OS}}_{{.Arch}}"
+      - cd ${REPO_ROOT}/app/generated/cmd/return-everything-server && gox --osarch "linux/amd64 darwin/amd64 windows/amd64" -ldflags "-X main.version=$BUILD_VERSION -X main.date=$BUILD_DATE" -output "${REPO_ROOT}/dist/${CIRCLE_PROJECT_REPONAME}_{{.OS}}_{{.Arch}}"
       - cd ${REPO_ROOT} && ghr -t $GITHUB_TOKEN -u $CIRCLE_PROJECT_USERNAME -r $CIRCLE_PROJECT_REPONAME --replace `git describe --tags` dist/
