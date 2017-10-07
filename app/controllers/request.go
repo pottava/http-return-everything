@@ -14,20 +14,20 @@ func getRequestInfo(params request.GetRequestInfoParams) middleware.Responder {
 
 func getRequestField(params request.GetRequestFieldParams) middleware.Responder {
 	obj := everything(params.HTTPRequest).Req
-	result := ""
+	var result *string
 	switch params.Key {
 	case "protocol":
-		result = swag.StringValue(obj.Protocol)
+		result = obj.Protocol
 	case "method":
-		result = swag.StringValue(obj.Method)
+		result = obj.Method
 	case "host":
-		result = swag.StringValue(obj.Host)
+		result = obj.Host
 	case "remote_addr":
-		result = swag.StringValue(obj.RemoteAddr)
+		result = obj.RemoteAddr
 	case "uri":
-		result = swag.StringValue(obj.URI)
+		result = obj.URI
 	}
-	return request.NewGetRequestFieldOK().WithPayload(result)
+	return request.NewGetRequestFieldOK().WithPayload(swag.StringValue(result))
 }
 
 func getRequestHeaders(params request.GetRequestHeadersParams) middleware.Responder {
