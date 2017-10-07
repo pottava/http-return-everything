@@ -1,5 +1,7 @@
 # HTTP-Return-Everything
 
+[![CircleCI](https://circleci.com/gh/pottava/http-return-everything.svg?style=svg)](https://circleci.com/gh/pottava/http-return-everything)
+
 Supported tags and respective `Dockerfile` links:  
 ・latest ([prod/Dockerfile](https://github.com/pottava/http-return-everything/blob/master/prod/Dockerfile))
 
@@ -81,24 +83,24 @@ spec:
 
 - GET /
 
-<img alt="" src="https://raw.githubusercontent.com/wiki/pottava/http-return-everything/images/result.png" style="max-width: 100%;">
+<img alt="" src="https://raw.githubusercontent.com/wiki/pottava/http-return-everything/images/everything.png" style="max-width: 100%;">
 
 - GET /app/envs/
 
-<img alt="" src="https://raw.githubusercontent.com/wiki/pottava/http-return-everything/images/envs.png" style="max-width: 100%;">
+<img alt="" src="https://raw.githubusercontent.com/wiki/pottava/http-return-everything/images/app-envs.png" style="max-width: 100%;">
 
 - GET /app/envs/{env}
 
-<img alt="" src="https://raw.githubusercontent.com/wiki/pottava/http-return-everything/images/envs-key.png" style="max-width: 100%;">
+<img alt="" src="https://raw.githubusercontent.com/wiki/pottava/http-return-everything/images/app-envs-key.png" style="max-width: 100%;">
 
 - GET /req/
 
-<img alt="" src="https://raw.githubusercontent.com/wiki/pottava/http-return-everything/images/request.png" style="max-width: 100%;">
+<img alt="" src="https://raw.githubusercontent.com/wiki/pottava/http-return-everything/images/req.png" style="max-width: 100%;">
 
 - GET /req/headers/
 
-<img alt="" src="https://raw.githubusercontent.com/wiki/pottava/http-return-everything/images/request-headers.png" style="max-width: 100%;">
+<img alt="" src="https://raw.githubusercontent.com/wiki/pottava/http-return-everything/images/req-headers.png" style="max-width: 100%;">
 
 - GET /req/headers/{header}
 
-<img alt="" src="https://raw.githubusercontent.com/wiki/pottava/http-return-everything/images/request-headers-key.png" style="max-width: 100%;">
+<img alt="" src="https://raw.githubusercontent.com/wiki/pottava/http-return-everything/images/req-headers-key.png" style="max-width: 100%;">
