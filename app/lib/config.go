@@ -14,6 +14,10 @@ type config struct {
 var Config *config
 
 func init() {
+	setup()
+}
+
+func setup() {
 	accessLog := true
 	if b, err := strconv.ParseBool(os.Getenv("ACCESS_LOG")); err == nil {
 		accessLog = b
