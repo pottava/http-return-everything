@@ -4,6 +4,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
+	"sort"
 	"strings"
 
 	"github.com/go-openapi/runtime/middleware"
@@ -38,10 +39,14 @@ func everything(r *http.Request) *models.Everything {
 	}
 	r.ParseForm()
 
+	envs := os.Environ()
+	sort.Slice(envs, func(i, j int) bool {
+		return strings.ToLower(envs[i]) < strings.ToLower(envs[j])
+	})
 	return &models.Everything{
 		App: &models.Application{
 			Args:    os.Args,
-			Envs:    os.Environ(),
+			Envs:    envs,
 			Grp:     swag.Int64(int64(os.Getgid())),
 			User:    swag.Int64(int64(os.Getuid())),
 			Workdir: swag.String(wd),
