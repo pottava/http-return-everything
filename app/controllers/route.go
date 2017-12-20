@@ -4,6 +4,7 @@ package controllers
 import (
 	"github.com/pottava/http-return-everything/app/generated/restapi/operations"
 	"github.com/pottava/http-return-everything/app/generated/restapi/operations/application"
+	"github.com/pottava/http-return-everything/app/generated/restapi/operations/aws"
 	"github.com/pottava/http-return-everything/app/generated/restapi/operations/host"
 	"github.com/pottava/http-return-everything/app/generated/restapi/operations/request"
 )
@@ -26,4 +27,10 @@ func Routes(api *operations.ReturnEverythingAPI) {
 	api.RequestGetRequestHeaderHandler = request.GetRequestHeaderHandlerFunc(getRequestHeader)
 	api.RequestGetRequestFormHandler = request.GetRequestFormHandlerFunc(getRequestForm)
 	api.RequestGetRequestPostFormHandler = request.GetRequestPostFormHandlerFunc(getRequestPostForm)
+
+	api.AwsGetAWSHandler = aws.GetAWSHandlerFunc(getAWS)
+	api.AwsGetAmazonEC2Handler = aws.GetAmazonEC2HandlerFunc(getAmazonEC2)
+	api.AwsGetAmazonEC2FieldHandler = aws.GetAmazonEC2FieldHandlerFunc(getAmazonEC2Field)
+	api.AwsGetAmazonECSHandler = aws.GetAmazonECSHandlerFunc(getAmazonECS)
+	api.AwsGetAmazonECSFieldHandler = aws.GetAmazonECSFieldHandlerFunc(getAmazonECSField)
 }

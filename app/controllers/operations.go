@@ -43,6 +43,10 @@ func everything(r *http.Request) *models.Everything {
 	sort.Slice(envs, func(i, j int) bool {
 		return strings.ToLower(envs[i]) < strings.ToLower(envs[j])
 	})
+	var aws *models.AWS
+	if candidate, found := getAWSInformation(); found {
+		aws = &candidate
+	}
 	return &models.Everything{
 		App: &models.Application{
 			Args:    os.Args,
@@ -66,5 +70,6 @@ func everything(r *http.Request) *models.Everything {
 			Form:       r.Form,
 			PostForm:   r.PostForm,
 		},
+		Aws: aws,
 	}
 }
