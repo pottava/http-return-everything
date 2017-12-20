@@ -311,6 +311,36 @@ paths:
           description: Unexpected error
           schema:
             $ref: '#/definitions/Error'
+  '/aws/ec2/{key}':
+    get:
+      description: |
+        returns specified information about Amazon EC2 container instance
+      operationId: getAmazonEC2Field
+      tags:
+        - aws
+      parameters:
+        - name: key
+          in: path
+          description: Can specify a field
+          required: true
+          type: string
+          enum:
+            - instance_id
+            - instance_profile
+            - availability_zone
+            - public_hostname
+            - public_ipv4
+            - local_hostname
+            - local_ipv4
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: string
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
   /aws/ecs:
     get:
       description: |
@@ -323,6 +353,36 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/AmazonECS'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  '/aws/ecs/{key}':
+    get:
+      description: |
+        returns specified information about Amazon ECS container
+      operationId: getAmazonECSField
+      tags:
+        - aws
+      parameters:
+        - name: key
+          in: path
+          description: Can specify a field
+          required: true
+          type: string
+          enum:
+            - container_id
+            - container_name
+            - container_instance_arn
+            - docker_container_name
+            - image_id
+            - image_name
+            - task_arn
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: string
         default:
           description: Unexpected error
           schema:
@@ -455,6 +515,15 @@ definitions:
   AmazonEC2:
     description: ec2 metadata
     properties:
+      instance_id:
+        description: instance-id
+        type: string
+      availability_zone:
+        description: placement/availability-zone
+        type: string
+      instance_profile:
+        description: iam/info
+        type: string
       public_hostname:
         description: public-hostname
         type: string
