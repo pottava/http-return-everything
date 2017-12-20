@@ -3,7 +3,7 @@ FROM alpine:3.6
 ENV API_PORT=8080
 ADD entrypoint.sh /
 
-RUN apk --no-cache add tini
+RUN apk --no-cache add tini ca-certificates
 RUN apk --no-cache add --virtual build-dependencies bash gcc musl-dev openssl go git \
 
     # Install go 1.9
