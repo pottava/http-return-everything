@@ -3,11 +3,15 @@ package lib
 import (
 	"compress/gzip"
 	"compress/zlib"
+	"encoding/json"
 	"io"
 	"log"
 	"net/http"
 	"strings"
 	"time"
+
+	"github.com/go-openapi/swag"
+	"github.com/pottava/http-return-everything/app/generated/models"
 )
 
 // Wrap wraps HTTP request handler
@@ -46,9 +50,25 @@ func Wrap(handler http.Handler) http.Handler {
 			handler.ServeHTTP(writer, r)
 
 			if Config.AccessLog {
-				log.Printf("[%s] %.3f %d %s %s",
-					addr, time.Now().Sub(proc).Seconds(),
-					writer.status, r.Method, r.URL)
+				if Config.AccessDetailLog {
+					marshaled, _ := json.Marshal(models.HTTPRequest{
+						Protocol:   swag.String(r.Proto),
+						Method:     swag.String(r.Method),
+						Host:       swag.String(r.Host),
+						RemoteAddr: swag.String(r.RemoteAddr),
+						URI:        swag.String(r.RequestURI),
+						Headers:    r.Header,
+						Form:       r.Form,
+						PostForm:   r.PostForm,
+					})
+					log.Printf("[%s] %.3f %d %s",
+						addr, time.Now().Sub(proc).Seconds(),
+						writer.status, marshaled)
+				} else {
+					log.Printf("[%s] %.3f %d %s %s",
+						addr, time.Now().Sub(proc).Seconds(),
+						writer.status, r.Method, r.URL)
+				}
 			}
 		}
 	})

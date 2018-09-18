@@ -10,6 +10,7 @@ services:
       - ..:/go/src/github.com/pottava/http-return-everything
     environment:
       - ACCESS_LOG
+      - ACCESS_DETAIL_LOG
       - CONTENT_ENCODING
     working_dir: /go/src/github.com/pottava/http-return-everything
     container_name: api

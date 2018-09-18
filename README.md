@@ -12,6 +12,7 @@ Supported tags and respective `Dockerfile` links:
 Environment Variables     | Description                                       |
 ------------------------- | ------------------------------------------------- |
 ACCESS_LOG                | Send access logs to /dev/stdout. (default: true) | 
+ACCESS_DETAIL_LOG         | Save HTTP request details (default: false) | 
 CONTENT_ENCODING          | Compress response data if the request allows. (default: true) |
 
 ### 2. Run the application

@@ -7,6 +7,7 @@ import (
 
 type config struct {
 	AccessLog       bool // ACCESS_LOG
+	AccessDetailLog bool // ACCESS_DETAIL_LOG
 	ContentEncoding bool // CONTENT_ENCODING
 }
 
@@ -22,12 +23,17 @@ func setup() {
 	if b, err := strconv.ParseBool(os.Getenv("ACCESS_LOG")); err == nil {
 		accessLog = b
 	}
+	accessDetailLog := false
+	if b, err := strconv.ParseBool(os.Getenv("ACCESS_DETAIL_LOG")); err == nil {
+		accessDetailLog = b
+	}
 	contentEncoding := true
 	if b, err := strconv.ParseBool(os.Getenv("CONTENT_ENCODING")); err == nil {
 		contentEncoding = b
 	}
 	Config = &config{
 		AccessLog:       accessLog,
+		AccessDetailLog: accessDetailLog,
 		ContentEncoding: contentEncoding,
 	}
 }
