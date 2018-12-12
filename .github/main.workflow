@@ -64,6 +64,9 @@ action "Tags" {
 action "Release" {
   needs = ["Tags", "Build"]
   uses = "pottava/github-actions/github/release@master"
+  env = {
+    ARTIFACT_DIR = "app/generated/cmd/return-everything-server/dist/"
+  }
   secrets = ["GITHUB_TOKEN"]
 }
 

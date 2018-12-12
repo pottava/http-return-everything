@@ -1,9 +1,10 @@
-# HTTP-Return-Everything
+# Retrieving server context - A REST API server
 
-[![CircleCI](https://circleci.com/gh/pottava/http-return-everything.svg?style=svg)](https://circleci.com/gh/pottava/http-return-everything)
+[![pottava/http-re](http://dockeri.co/image/pottava/http-re)](https://hub.docker.com/r/pottava/http-re/)
 
 Supported tags and respective `Dockerfile` links:  
-・latest ([prod/Dockerfile](https://github.com/pottava/http-return-everything/blob/master/prod/Dockerfile))
+・latest ([prod/1.2/Dockerfile](https://github.com/pottava/http-return-everything/blob/master/prod/1.2/Dockerfile))  
+・1.2 ([prod/1.2/Dockerfile](https://github.com/pottava/http-return-everything/blob/master/prod/1.2/Dockerfile))  
 
 ## Usage
 
@@ -11,19 +12,20 @@ Supported tags and respective `Dockerfile` links:
 
 Environment Variables     | Description                                       |
 ------------------------- | ------------------------------------------------- |
+API_PORT                  | Listening port. (default: 8080) | 
 ACCESS_LOG                | Send access logs to /dev/stdout. (default: true) | 
 ACCESS_DETAIL_LOG         | Save HTTP request details (default: false) | 
 CONTENT_ENCODING          | Compress response data if the request allows. (default: true) |
 
 ### 2. Run the application
 
-`$ docker run -d -p 80:8080 pottava/http-re:1.0`
+`$ docker run -d -p 80:8080 pottava/http-re:1.2`
 
 * with docker-compose.yml:  
 
-```
+```yaml
 check:
-  image: pottava/http-re:1.0
+  image: pottava/http-re:1.2
   ports:
     - 80:8080
   environment:
@@ -34,7 +36,7 @@ check:
 
 * with kubernetes-deployment.yaml
 
-```
+```yaml
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
@@ -48,7 +50,7 @@ spec:
     spec:
       containers:
       - name: api
-        image: pottava/http-re:1.0
+        image: pottava/http-re:1.2
         imagePullPolicy: Always
         ports:
         - protocol: TCP
@@ -81,6 +83,8 @@ spec:
 ```
 
 ### 3. Make HTTP GET requests
+
+[API spec](https://github.com/pottava/http-return-everything/blob/master/spec.yaml)
 
 - GET /
 
