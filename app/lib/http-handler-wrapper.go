@@ -62,11 +62,11 @@ func Wrap(handler http.Handler) http.Handler {
 						PostForm:   r.PostForm,
 					})
 					log.Printf("[%s] %.3f %d %s",
-						addr, time.Now().Sub(proc).Seconds(),
+						addr, time.Since(proc).Seconds(),
 						writer.status, marshaled)
 				} else {
 					log.Printf("[%s] %.3f %d %s %s",
-						addr, time.Now().Sub(proc).Seconds(),
+						addr, time.Since(proc).Seconds(),
 						writer.status, r.Method, r.URL)
 				}
 			}

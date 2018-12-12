@@ -18,4 +18,4 @@ $ docker-compose -f dev/tools.yml run --rm deps
 $ docker-compose -f dev/runtime.yml up
 ```
 
-Now you can get a '200 OK' response from `http://localhost:8080/api/v1/version` .
+Now you can get a '200 OK' response from `http://localhost:9000` .

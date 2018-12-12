@@ -3,7 +3,7 @@ version: "2.1"
 services:
   # docker-compose -f dev/tools.yml run --rm codegen
   codegen:
-    image: supinf/go-swagger:0.12
+    image: supinf/go-swagger:0.16.0
     command: generate server -f spec.yaml -t app/generated
     volumes:
       - ..:/go/src/github.com/pottava/http-return-everything
@@ -11,7 +11,7 @@ services:
 
   # docker-compose -f dev/tools.yml run --rm deps
   deps:
-    image: supinf/go-dep:0.3
+    image: supinf/go-dep:0.5
     command: ensure
     volumes:
       - ..:/go/src/github.com/pottava/http-return-everything
@@ -19,7 +19,7 @@ services:
 
   # docker-compose -f dev/tools.yml run --rm test
   test:
-    image: pottava/golang:1.9
+    image: pottava/golang:1.10
     command: sh -c "go test -cover -bench -benchmem `go list ./... | grep -v /generated/` -v"
     volumes:
       - ..:/go/src/github.com/pottava/http-return-everything
@@ -27,7 +27,7 @@ services:
 
   # BUILD_VERSION=v0.1.0 BUILD_DATE=`date +%FT%T%z` docker-compose -f dev/tools.yml run --rm build
   build:
-    image: pottava/gox:go1.8
+    image: pottava/gox:go1.11
     command: --osarch "linux/amd64 darwin/amd64 windows/amd64" -ldflags "-X main.version=${BUILD_VERSION} -X main.date=${BUILD_DATE}" -output "/go/src/github.com/pottava/http-return-everything/dist/{{.OS}}_{{.Arch}}"
     volumes:
       - ..:/go/src/github.com/pottava/http-return-everything
