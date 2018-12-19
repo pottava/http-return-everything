@@ -17,6 +17,14 @@ services:
       - ..:/go/src/github.com/pottava/http-return-everything
     working_dir: /go/src/github.com/pottava/http-return-everything/app
 
+  # docker-compose -f dev/tools.yml run --rm lint
+  lint:
+    image: supinf/golangci-lint:1.12
+    command: run --config .golangci.yml
+    volumes:
+      - ..:/go/src/github.com/pottava/http-return-everything
+    working_dir: /go/src/github.com/pottava/http-return-everything/app
+
   # docker-compose -f dev/tools.yml run --rm test
   test:
     image: pottava/golang:1.10

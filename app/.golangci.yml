@@ -28,11 +28,16 @@ linters:
     # default disabled
     - golint
     - gosec
+    - unconvert
     - goconst
+    - goimports
     - maligned
     - megacheck
     - misspell
     - nakedret
+    - prealloc
+    - scopelint
+    - gocritic
 
 linters-settings:
   govet:
