@@ -518,6 +518,12 @@ definitions:
       instance_id:
         description: instance-id
         type: string
+      instance_type:
+        description: instance-type
+        type: string
+      ami_id:
+        description: ami-id
+        type: string
       availability_zone:
         description: placement/availability-zone
         type: string
@@ -536,6 +542,11 @@ definitions:
       local_ipv4:
         description: local-ipv4
         type: string
+      security_groups:
+        description: security-groups
+        type: array
+        items:
+          type: string
   AmazonECS:
     description: ecs information when environment variables contain ECS_CONTAINER_METADATA_FILE
     required:
@@ -543,6 +554,9 @@ definitions:
       - task_arn
       - container_name
     properties:
+      cluster:
+        description: Cluster
+        type: string
       container_instance_arn:
         description: ContainerInstanceARN
         type: string
@@ -557,6 +571,9 @@ definitions:
         type: string
       docker_container_name:
         description: DockerContainerName
+        type: string
+      availability_zone:
+        description: AvailabilityZone
         type: string
       image_id:
         description: ImageID

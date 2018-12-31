@@ -8,6 +8,7 @@ import (
 	"os"
 	"reflect"
 	"strconv"
+	"strings"
 	"sync"
 	"time"
 
@@ -15,6 +16,8 @@ import (
 	"github.com/go-openapi/swag"
 	"github.com/pottava/http-return-everything/app/generated/models"
 	"github.com/pottava/http-return-everything/app/generated/restapi/operations/aws"
+	"github.com/pottava/http-return-everything/app/lib"
+	appModels "github.com/pottava/http-return-everything/app/models"
 )
 
 func getAWS(params aws.GetAWSParams) middleware.Responder {
@@ -54,6 +57,10 @@ func getAmazonEC2Field(params aws.GetAmazonEC2FieldParams) middleware.Responder 
 	switch params.Key {
 	case "instance_id":
 		return aws.NewGetAmazonEC2FieldOK().WithPayload(meta.InstanceID)
+	case "instance_type":
+		return aws.NewGetAmazonEC2FieldOK().WithPayload(meta.InstanceType)
+	case "ami_id":
+		return aws.NewGetAmazonEC2FieldOK().WithPayload(meta.AmiID)
 	case "instance_profile":
 		return aws.NewGetAmazonEC2FieldOK().WithPayload(meta.InstanceProfile)
 	case "availability_zone":
@@ -66,6 +73,9 @@ func getAmazonEC2Field(params aws.GetAmazonEC2FieldParams) middleware.Responder 
 		return aws.NewGetAmazonEC2FieldOK().WithPayload(meta.LocalHostname)
 	case "local_ipv4":
 		return aws.NewGetAmazonEC2FieldOK().WithPayload(meta.LocalIPV4)
+	case "security_groups":
+		result := strings.Join(meta.SecurityGroups, ",")
+		return aws.NewGetAmazonEC2FieldOK().WithPayload(result)
 	}
 	return notfound
 }
@@ -93,6 +103,8 @@ func getAmazonECSField(params aws.GetAmazonECSFieldParams) middleware.Responder 
 		return notfound
 	}
 	switch params.Key {
+	case "cluster":
+		return aws.NewGetAmazonECSFieldOK().WithPayload(meta.Cluster)
 	case "container_id":
 		return aws.NewGetAmazonECSFieldOK().WithPayload(meta.ContainerID)
 	case "container_name":
@@ -101,6 +113,8 @@ func getAmazonECSField(params aws.GetAmazonECSFieldParams) middleware.Responder 
 		return aws.NewGetAmazonECSFieldOK().WithPayload(swag.StringValue(meta.ContainerInstanceArn))
 	case "docker_container_name":
 		return aws.NewGetAmazonECSFieldOK().WithPayload(meta.DockerContainerName)
+	case "availability_zone":
+		return aws.NewGetAmazonEC2FieldOK().WithPayload(meta.AvailabilityZone)
 	case "image_id":
 		return aws.NewGetAmazonECSFieldOK().WithPayload(meta.ImageID)
 	case "image_name":
@@ -112,8 +126,10 @@ func getAmazonECSField(params aws.GetAmazonECSFieldParams) middleware.Responder 
 }
 
 const (
-	ec2InstanceMetadataPrefix   = "http://169.254.169.254/latest/meta-data/"
-	ecsContainerMetadataFileKey = "ECS_CONTAINER_METADATA_FILE"
+	ec2InstanceMetadataPrefix  = "http://169.254.169.254/latest/meta-data/"
+	v3ecsTaskMetadataEndpoint  = "ECS_CONTAINER_METADATA_URI"
+	v2ecsTaskMetadataEndpoint  = "http://169.254.170.2/v2/metadata"
+	v1ecsContainerMetadataFile = "ECS_CONTAINER_METADATA_FILE"
 )
 
 func getAWSInformation() (models.AWS, bool) {
@@ -142,19 +158,17 @@ func ec2InstanceMetadata() (models.AmazonEC2, bool) {
 		go func(key string) {
 			defer wg.Done()
 
-			res, err := client.Get(ec2InstanceMetadataPrefix + key)
-			if err != nil {
-				return
-			}
-			defer res.Body.Close()
-
-			body, err := ioutil.ReadAll(res.Body)
+			body, err := lib.HTTPGet(client, ec2InstanceMetadataPrefix+key)
 			if err != nil {
 				return
 			}
 			switch key {
 			case "instance-id":
 				ec2.InstanceID = string(body)
+			case "instance-type":
+				ec2.InstanceType = string(body)
+			case "ami-id":
+				ec2.AmiID = string(body)
 			case "placement/availability-zone":
 				ec2.AvailabilityZone = string(body)
 			case "iam/info":
@@ -171,6 +185,8 @@ func ec2InstanceMetadata() (models.AmazonEC2, bool) {
 				ec2.LocalHostname = string(body)
 			case "local-ipv4":
 				ec2.LocalIPV4 = string(body)
+			case "security-groups":
+				ec2.SecurityGroups = strings.Split(string(body), "\n")
 			}
 		}(key)
 	}
@@ -178,38 +194,57 @@ func ec2InstanceMetadata() (models.AmazonEC2, bool) {
 	return ec2, !reflect.DeepEqual(ec2, models.AmazonEC2{})
 }
 
-type ecsPortMappings struct {
-	ContainerPort string
-	HostPort      string
-	BindIP        string
-	Protocol      string
-}
-type ecsNetworks struct {
-	NetworkMode   string
-	IPV4Addresses []string
-}
-type ecsMetadata struct {
-	ContainerInstanceArn string `json:"ContainerInstanceARN"`
-	TaskArn              string `json:"TaskARN"`
-	ContainerID          string `json:"ContainerID"`
-	ContainerName        string `json:"ContainerName"`
-	DockerContainerName  string `json:"DockerContainerName"`
-	ImageID              string `json:"ImageID"`
-	ImageName            string `json:"ImageName"`
-	PortMappings         []ecsPortMappings
-	Networks             []ecsNetworks
-	MetadataFileStatus   string `json:"MetadataFileStatus"`
+func ecsContainerMetadata() (*models.AmazonECS, bool) {
+	if meta, found := ecsContainerMetadataV3(); found {
+		return meta, found
+	}
+	if meta, found := ecsContainerMetadataV2(); found {
+		return meta, found
+	}
+	return ecsContainerMetadataV1()
 }
 
-func ecsContainerMetadata() (*models.AmazonECS, bool) {
-	if value, found := os.LookupEnv(ecsContainerMetadataFileKey); found {
+func ecsContainerMetadataV3() (*models.AmazonECS, bool) {
+	if value, found := os.LookupEnv(v3ecsTaskMetadataEndpoint); found {
+		client := &http.Client{
+			Timeout: time.Duration(2) * time.Second,
+		}
+		body, err := lib.HTTPGet(client, value+"/task")
+		if err != nil {
+			return nil, false
+		}
+		meta := appModels.ECSTaskMeta{}
+		if err = json.Unmarshal(body, &meta); err != nil {
+			return nil, false
+		}
+		return meta.ToAmazonECS(), true
+	}
+	return nil, false
+}
+
+func ecsContainerMetadataV2() (*models.AmazonECS, bool) {
+	client := &http.Client{
+		Timeout: time.Duration(2) * time.Second,
+	}
+	body, err := lib.HTTPGet(client, v2ecsTaskMetadataEndpoint)
+	if err != nil {
+		return nil, false
+	}
+	meta := appModels.ECSTaskMeta{}
+	if err = json.Unmarshal(body, &meta); err != nil {
+		return nil, false
+	}
+	return meta.ToAmazonECS(), true
+}
+
+func ecsContainerMetadataV1() (*models.AmazonECS, bool) {
+	if value, found := os.LookupEnv(v1ecsContainerMetadataFile); found {
 		file, err := ioutil.ReadFile(value)
 		if err != nil {
 			return nil, false
 		}
-		ecs := ecsMetadata{}
-
-		type Alias ecsMetadata
+		type Alias appModels.ECSMetadataV1
+		ecs := appModels.ECSMetadataV1{}
 		alias := &struct {
 			*Alias
 			PortMappings []map[string]interface{} `json:"PortMappings"`
@@ -219,9 +254,9 @@ func ecsContainerMetadata() (*models.AmazonECS, bool) {
 		}
 		json.Unmarshal(file, alias)
 
-		var mappings []ecsPortMappings
+		mappings := []appModels.ECSPortMappingsV1{}
 		for _, mapping := range alias.PortMappings {
-			mappings = append(mappings, ecsPortMappings{
+			mappings = append(mappings, appModels.ECSPortMappingsV1{
 				ContainerPort: fmt.Sprintf("%v", mapping["ContainerPort"]),
 				HostPort:      fmt.Sprintf("%v", mapping["HostPort"]),
 				BindIP:        fmt.Sprintf("%v", mapping["BindIp"]),
@@ -230,66 +265,15 @@ func ecsContainerMetadata() (*models.AmazonECS, bool) {
 		}
 		ecs.PortMappings = mappings
 
-		var networks []ecsNetworks
+		networks := []appModels.ECSNetworksV1{}
 		for _, network := range alias.Networks {
-			networks = append(networks, ecsNetworks{
+			networks = append(networks, appModels.ECSNetworksV1{
 				NetworkMode:   fmt.Sprintf("%v", network["NetworkMode"]),
-				IPV4Addresses: interfaceToSlice(network["IPv4Addresses"]),
+				IPV4Addresses: lib.InterfaceToSlice(network["IPv4Addresses"]),
 			})
 		}
 		ecs.Networks = networks
-
-		return ecs.toAmazonECS(), true
+		return ecs.ToAmazonECS(), true
 	}
 	return nil, false
-}
-
-func (e *ecsMetadata) toAmazonECS() *models.AmazonECS {
-	mappings := []*models.AmazonECSPortMappingsItems0{}
-	for _, mapping := range e.PortMappings {
-		mappings = append(mappings, mapping.toAmazonECSPortMappingsItem())
-	}
-	networks := []*models.AmazonECSNetworksItems0{}
-	for _, network := range e.Networks {
-		networks = append(networks, network.toAmazonECSNetworksItem())
-	}
-	return &models.AmazonECS{
-		ContainerInstanceArn: swag.String(e.ContainerInstanceArn),
-		TaskArn:              swag.String(e.TaskArn),
-		ContainerID:          e.ContainerID,
-		ContainerName:        swag.String(e.ContainerName),
-		DockerContainerName:  e.DockerContainerName,
-		ImageID:              e.ImageID,
-		ImageName:            e.ImageName,
-		PortMappings:         mappings,
-		Networks:             networks,
-	}
-}
-
-func (e *ecsPortMappings) toAmazonECSPortMappingsItem() *models.AmazonECSPortMappingsItems0 {
-	return &models.AmazonECSPortMappingsItems0{
-		ContainerPort: swag.String(e.ContainerPort),
-		HostPort:      swag.String(e.HostPort),
-		BindIP:        swag.String(e.BindIP),
-		Protocol:      swag.String(e.Protocol),
-	}
-}
-
-func (e *ecsNetworks) toAmazonECSNetworksItem() *models.AmazonECSNetworksItems0 {
-	return &models.AmazonECSNetworksItems0{
-		NetworkMode:   swag.String(e.NetworkMode),
-		IPV4Addresses: swag.String(e.IPV4Addresses[0]),
-	}
-}
-
-func interfaceToSlice(slice interface{}) []string {
-	s := reflect.ValueOf(slice)
-	if s.Kind() != reflect.Slice {
-		return nil
-	}
-	ret := make([]string, s.Len())
-	for i := 0; i < s.Len(); i++ {
-		ret[i] = fmt.Sprintf("%v", s.Index(i).Interface())
-	}
-	return ret
 }
