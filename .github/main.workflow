@@ -73,9 +73,9 @@ action "Release" {
 action "BuildImage" {
   needs = ["Tags", "Build"]
   uses = "supinf/github-actions/docker/build@master"
-  args = "pottava/http-re:1.2"
+  args = "pottava/http-re:1.3"
   env = {
-    DOCKERFILE = "prod/1.2/Dockerfile"
+    DOCKERFILE = "prod/1.3/Dockerfile"
     BUILD_OPTIONS = "--no-cache"
   }
 }
@@ -84,7 +84,7 @@ action "TagImage" {
   needs = ["BuildImage"]
   uses = "supinf/github-actions/docker/tag@master"
   env = {
-    SRC_IMAGE = "pottava/http-re:1.2"
+    SRC_IMAGE = "pottava/http-re:1.3"
     DST_IMAGE = "pottava/http-re:latest"
   }
 }
@@ -98,7 +98,7 @@ action "Login" {
 action "PushImage" {
   needs = ["TagImage", "Login"]
   uses = "supinf/github-actions/docker/push@master"
-  args = "pottava/http-re:1.2,pottava/http-re:latest"
+  args = "pottava/http-re:1.3,pottava/http-re:latest"
 }
 
 action "ReleaseResult" {

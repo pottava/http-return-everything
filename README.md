@@ -3,8 +3,8 @@
 [![pottava/http-re](http://dockeri.co/image/pottava/http-re)](https://hub.docker.com/r/pottava/http-re/)
 
 Supported tags and respective `Dockerfile` links:  
-・latest ([prod/1.2/Dockerfile](https://github.com/pottava/http-return-everything/blob/master/prod/1.2/Dockerfile))  
-・1.2 ([prod/1.2/Dockerfile](https://github.com/pottava/http-return-everything/blob/master/prod/1.2/Dockerfile))  
+・latest ([prod/1.3/Dockerfile](https://github.com/pottava/http-return-everything/blob/master/prod/1.3/Dockerfile))  
+・1.3 ([prod/1.3/Dockerfile](https://github.com/pottava/http-return-everything/blob/master/prod/1.3/Dockerfile))  
 
 ## Usage
 
@@ -19,13 +19,13 @@ CONTENT_ENCODING          | Compress response data if the request allows. (defau
 
 ### 2. Run the application
 
-`$ docker run -d -p 80:8080 pottava/http-re:1.2`
+`$ docker run -d -p 80:8080 pottava/http-re:1.3`
 
 * with docker-compose.yml:  
 
 ```yaml
 check:
-  image: pottava/http-re:1.2
+  image: pottava/http-re:1.3
   ports:
     - 80:8080
   environment:
@@ -50,7 +50,7 @@ spec:
     spec:
       containers:
       - name: api
-        image: pottava/http-re:1.2
+        image: pottava/http-re:1.3
         imagePullPolicy: Always
         ports:
         - protocol: TCP
