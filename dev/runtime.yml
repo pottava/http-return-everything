@@ -3,7 +3,7 @@ version: "2"
 services:
   # docker-compose -f dev/runtime.yml up
   api:
-    image: golang:1.11.2-alpine3.8
+    image: golang:1.11.4-alpine3.8
     command: go run generated/cmd/return-everything-server/main.go --host 0.0.0.0 --port 8080
     ports:
       - 9000:8080
