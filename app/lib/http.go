@@ -14,7 +14,7 @@ func HTTPGet(client *http.Client, endpoint string) ([]byte, error) {
 			return resp, nil
 		}
 		err = e
-		time.Sleep(1 * time.Second)
+		time.Sleep(100 * time.Millisecond)
 	}
 	return nil, err
 }

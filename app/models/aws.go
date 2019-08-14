@@ -10,15 +10,17 @@ import (
 
 // ECSTaskMeta is a model for ECS task metadata
 type ECSTaskMeta struct {
-	Cluster          string
-	TaskARN          string
-	Family           string
-	Revision         string
-	DesiredStatus    string `json:",omitempty"`
-	KnownStatus      string
-	AvailabilityZone string
-	Containers       []ECSTaskMetaContainer `json:",omitempty"`
-	Limits           ECSTaskMetaLimits      `json:",omitempty"`
+	Cluster          string                 `json:"Cluster"`
+	TaskARN          string                 `json:"TaskARN"`
+	Family           string                 `json:"Family"`
+	Revision         string                 `json:"Revision"`
+	DesiredStatus    string                 `json:"DesiredStatus,omitempty"`
+	KnownStatus      string                 `json:"KnownStatus"`
+	Containers       []ECSTaskMetaContainer `json:"Containers,omitempty"`
+	Limits           ECSTaskMetaLimits      `json:"Limits,omitempty"`
+	PullStartedAt    *time.Time             `json:"PullStartedAt"`
+	PullStoppedAt    *time.Time             `json:"PullStoppedAt"`
+	AvailabilityZone string                 `json:"AvailabilityZone"`
 }
 
 // ToAmazonECSformat itself as AmazonECS
@@ -59,45 +61,35 @@ func (e *ECSTaskMeta) ToAmazonECS() *models.AmazonECS {
 
 // ECSTaskMetaContainer is a model for ECS task container
 type ECSTaskMetaContainer struct {
-	ID            string `json:"DockerId"`
-	Name          string
-	DockerName    string
-	Image         string
-	ImageID       string
-	Ports         []ECSTaskMetaPort `json:",omitempty"`
-	Labels        map[string]string `json:",omitempty"`
-	DesiredStatus string
-	KnownStatus   string
-	ExitCode      *int `json:",omitempty"`
-	Limits        ECSTaskMetaLimits
-	CreatedAt     *time.Time `json:",omitempty"`
-	StartedAt     *time.Time `json:",omitempty"`
-	FinishedAt    *time.Time `json:",omitempty"`
-	Type          string
-	Health        ECSTaskMetaHealthStatus `json:"health,omitempty"`
-	Networks      []ECSTaskMetaNetwork    `json:",omitempty"`
-	Volumes       []ECSTaskMetaVolume     `json:"Volumes,omitempty"`
+	ID            string               `json:"DockerId"`
+	Name          string               `json:"Name"`
+	DockerName    string               `json:"DockerName"`
+	Image         string               `json:"Image"`
+	ImageID       string               `json:"ImageID"`
+	Ports         []ECSTaskMetaPort    `json:"Ports,omitempty"`
+	Labels        map[string]string    `json:"Labels,omitempty"`
+	DesiredStatus string               `json:"DesiredStatus"`
+	KnownStatus   string               `json:"KnownStatus"`
+	ExitCode      *int                 `json:"ExitCode,omitempty"`
+	Limits        ECSTaskMetaLimits    `json:"Limits,omitempty"`
+	CreatedAt     *time.Time           `json:"CreatedAt,omitempty"`
+	StartedAt     *time.Time           `json:"StartedAt,omitempty"`
+	FinishedAt    *time.Time           `json:"FinishedAt,omitempty"`
+	Type          string               `json:"Type,omitempty"`
+	Networks      []ECSTaskMetaNetwork `json:"Networks,omitempty"`
 }
 
 // ECSTaskMetaLimits is a model for ECS task limits
 type ECSTaskMetaLimits struct {
-	CPU    uint
-	Memory uint
+	CPU    uint `json:"CPU"`
+	Memory uint `json:"Memory"`
 }
 
 // ECSTaskMetaPort is a model for ECS task port
 type ECSTaskMetaPort struct {
-	Protocol      string
-	ContainerPort uint16
-	HostPort      uint16 `json:",omitempty"`
-}
-
-// ECSTaskMetaHealthStatus is a model for ECS task health status
-type ECSTaskMetaHealthStatus struct {
-	Status   string     `json:"status,omitempty"`
-	Since    *time.Time `json:"statusSince,omitempty"`
-	ExitCode int        `json:"exitCode,omitempty"`
-	Output   string     `json:"output,omitempty"`
+	Protocol      string `json:"Protocol"`
+	ContainerPort uint16 `json:"ContainerPort"`
+	HostPort      uint16 `json:"HostPort,omitempty"`
 }
 
 // ECSTaskMetaNetwork is a model for ECS task network
@@ -105,13 +97,6 @@ type ECSTaskMetaNetwork struct {
 	NetworkMode   string   `json:"NetworkMode,omitempty"`
 	IPv4Addresses []string `json:"IPv4Addresses,omitempty"`
 	IPv6Addresses []string `json:"IPv6Addresses,omitempty"`
-}
-
-// ECSTaskMetaVolume is a model for ECS task volume
-type ECSTaskMetaVolume struct {
-	DockerName  string `json:"DockerName,omitempty"`
-	Source      string `json:"Source,omitempty"`
-	Destination string `json:"Destination,omitempty"`
 }
 
 // ECSMetadataV1 is a model for meta API

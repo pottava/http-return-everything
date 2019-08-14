@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"os"
 	"reflect"
@@ -211,10 +212,12 @@ func ecsContainerMetadataV3() (*models.AmazonECS, bool) {
 		}
 		body, err := lib.HTTPGet(client, value+"/task")
 		if err != nil {
+			log.Printf("Error: %s", err.Error())
 			return nil, false
 		}
 		meta := appModels.ECSTaskMeta{}
 		if err = json.Unmarshal(body, &meta); err != nil {
+			log.Printf("Error: %s", err.Error())
 			return nil, false
 		}
 		return meta.ToAmazonECS(), true
@@ -232,6 +235,7 @@ func ecsContainerMetadataV2() (*models.AmazonECS, bool) {
 	}
 	meta := appModels.ECSTaskMeta{}
 	if err = json.Unmarshal(body, &meta); err != nil {
+		log.Printf("Error: %s", err.Error())
 		return nil, false
 	}
 	return meta.ToAmazonECS(), true
@@ -241,6 +245,7 @@ func ecsContainerMetadataV1() (*models.AmazonECS, bool) {
 	if value, found := os.LookupEnv(v1ecsContainerMetadataFile); found {
 		file, err := ioutil.ReadFile(value)
 		if err != nil {
+			log.Printf("Error: %s", err.Error())
 			return nil, false
 		}
 		type Alias appModels.ECSMetadataV1
