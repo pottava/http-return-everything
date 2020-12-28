@@ -2,6 +2,7 @@ package models
 
 import (
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/go-openapi/swag"
@@ -23,40 +24,63 @@ type ECSTaskMeta struct {
 	AvailabilityZone string                 `json:"AvailabilityZone"`
 }
 
-// ToAmazonECSformat itself as AmazonECS
+// ToAmazonECS itself as AmazonECS
 func (e *ECSTaskMeta) ToAmazonECS() *models.AmazonECS {
-	container := ECSTaskMetaContainer{}
-	if len(e.Containers) > 0 {
-		container = e.Containers[0]
-	}
-	mappings := []*models.AmazonECSPortMappingsItems0{}
-	for _, mapping := range container.Ports {
-		mappings = append(mappings, &models.AmazonECSPortMappingsItems0{
-			ContainerPort: swag.String(fmt.Sprintf("%d", mapping.ContainerPort)),
-			HostPort:      swag.String(fmt.Sprintf("%d", mapping.HostPort)),
-			Protocol:      swag.String(mapping.Protocol),
-		})
-	}
-	networks := []*models.AmazonECSNetworksItems0{}
-	for _, network := range container.Networks {
-		networks = append(networks, &models.AmazonECSNetworksItems0{
-			NetworkMode:   swag.String(network.NetworkMode),
-			IPV4Addresses: swag.String(network.IPv4Addresses[0]),
+	containers := []*models.AmazonECSContainer{}
+	for _, container := range e.Containers {
+		mappings := []*models.AmazonECSContainerPortMappingsItems0{}
+		for _, mapping := range container.Ports {
+			mappings = append(mappings, &models.AmazonECSContainerPortMappingsItems0{
+				ContainerPort: swag.String(fmt.Sprintf("%d", mapping.ContainerPort)),
+				HostPort:      swag.String(fmt.Sprintf("%d", mapping.HostPort)),
+				Protocol:      swag.String(mapping.Protocol),
+			})
+		}
+		networks := []*models.AmazonECSContainerNetworksItems0{}
+		for _, network := range container.Networks {
+			networks = append(networks, &models.AmazonECSContainerNetworksItems0{
+				NetworkMode:   swag.String(network.NetworkMode),
+				IPV4Addresses: swag.String(strings.Join(network.IPv4Addresses, ",")),
+				IPV6Addresses: strings.Join(network.IPv6Addresses, ","),
+			})
+		}
+		containers = append(containers, &models.AmazonECSContainer{
+			ID:           container.ID,
+			Name:         swag.String(container.Name),
+			Type:         container.Type,
+			DockerName:   container.DockerName,
+			ImageID:      container.ImageID,
+			ImageName:    swag.String(container.Image),
+			PortMappings: mappings,
+			Networks:     networks,
+			Desired:      container.DesiredStatus,
+			Known:        container.KnownStatus,
+			CPU:          fmt.Sprintf("%v", container.Limits.CPU),
+			Memory:       fmt.Sprintf("%v", container.Limits.Memory),
+			CreatedAt:    timeToStr(container.CreatedAt),
+			StartedAt:    timeToStr(container.StartedAt),
 		})
 	}
 	return &models.AmazonECS{
-		Cluster:              e.Cluster,
-		ContainerInstanceArn: nil,
-		TaskArn:              swag.String(e.TaskARN),
-		ContainerID:          container.ID,
-		ContainerName:        swag.String(container.Name),
-		DockerContainerName:  container.DockerName,
-		AvailabilityZone:     e.AvailabilityZone,
-		ImageID:              container.ImageID,
-		ImageName:            container.Image,
-		PortMappings:         mappings,
-		Networks:             networks,
+		Cluster:          swag.String(e.Cluster),
+		TaskArn:          swag.String(e.TaskARN),
+		Family:           e.Family,
+		Revision:         e.Revision,
+		Containers:       containers,
+		Desired:          e.DesiredStatus,
+		Known:            e.KnownStatus,
+		AvailabilityZone: e.AvailabilityZone,
+		CPU:              fmt.Sprintf("%v", e.Limits.CPU),
+		Memory:           fmt.Sprintf("%v", e.Limits.Memory),
+		PullStartedAt:    timeToStr(e.PullStartedAt),
 	}
+}
+
+func timeToStr(t *time.Time) string {
+	if t == nil {
+		return ""
+	}
+	return t.Format(time.RFC3339)
 }
 
 // ECSTaskMetaContainer is a model for ECS task container
@@ -81,8 +105,8 @@ type ECSTaskMetaContainer struct {
 
 // ECSTaskMetaLimits is a model for ECS task limits
 type ECSTaskMetaLimits struct {
-	CPU    uint `json:"CPU"`
-	Memory uint `json:"Memory"`
+	CPU    float64 `json:"CPU"`
+	Memory float64 `json:"Memory"`
 }
 
 // ECSTaskMetaPort is a model for ECS task port
@@ -114,36 +138,39 @@ type ECSMetadataV1 struct {
 	MetadataFileStatus   string `json:"MetadataFileStatus"`
 }
 
-// ToAmazonECSformat itself as AmazonECS
+// ToAmazonECS itself as AmazonECS
 func (e *ECSMetadataV1) ToAmazonECS() *models.AmazonECS {
-	mappings := []*models.AmazonECSPortMappingsItems0{}
+	containers := []*models.AmazonECSContainer{}
+	mappings := []*models.AmazonECSContainerPortMappingsItems0{}
 	for _, mapping := range e.PortMappings {
-		mappings = append(mappings, &models.AmazonECSPortMappingsItems0{
+		mappings = append(mappings, &models.AmazonECSContainerPortMappingsItems0{
 			ContainerPort: swag.String(mapping.ContainerPort),
 			HostPort:      swag.String(mapping.HostPort),
-			BindIP:        swag.String(mapping.BindIP),
+			BindIP:        mapping.BindIP,
 			Protocol:      swag.String(mapping.Protocol),
 		})
 	}
-	networks := []*models.AmazonECSNetworksItems0{}
+	networks := []*models.AmazonECSContainerNetworksItems0{}
 	for _, network := range e.Networks {
-		networks = append(networks, &models.AmazonECSNetworksItems0{
+		networks = append(networks, &models.AmazonECSContainerNetworksItems0{
 			NetworkMode:   swag.String(network.NetworkMode),
-			IPV4Addresses: swag.String(network.IPV4Addresses[0]),
+			IPV4Addresses: swag.String(strings.Join(network.IPV4Addresses, ",")),
 		})
 	}
+	containers = append(containers, &models.AmazonECSContainer{
+		ID:           e.ContainerID,
+		Name:         swag.String(e.ContainerName),
+		DockerName:   e.DockerContainerName,
+		ImageID:      e.ImageID,
+		ImageName:    swag.String(e.ImageName),
+		PortMappings: mappings,
+		Networks:     networks,
+	})
 	return &models.AmazonECS{
-		Cluster:              e.Cluster,
-		ContainerInstanceArn: swag.String(e.ContainerInstanceArn),
+		Cluster:              swag.String(e.Cluster),
+		ContainerInstanceArn: e.ContainerInstanceArn,
 		TaskArn:              swag.String(e.TaskArn),
-		ContainerID:          e.ContainerID,
-		ContainerName:        swag.String(e.ContainerName),
-		DockerContainerName:  e.DockerContainerName,
-		AvailabilityZone:     "",
-		ImageID:              e.ImageID,
-		ImageName:            e.ImageName,
-		PortMappings:         mappings,
-		Networks:             networks,
+		Containers:           containers,
 	}
 }
 

@@ -550,9 +550,8 @@ definitions:
   AmazonECS:
     description: ecs information when environment variables contain ECS_CONTAINER_METADATA_FILE
     required:
-      - container_instance_arn
+      - cluster
       - task_arn
-      - container_name
     properties:
       cluster:
         description: Cluster
@@ -563,17 +562,52 @@ definitions:
       task_arn:
         description: TaskARN
         type: string
-      container_id:
-        description: ContainerID
+      family:
+        description: Family
         type: string
-      container_name:
-        description: ContainerName
+      revision:
+        description: Revision
         type: string
-      docker_container_name:
-        description: DockerContainerName
+      desired:
+        description: DesiredStatus
         type: string
+      known:
+        description: KnownStatus
+        type: string
+      containers:
+        description: ECS containers
+        type: array
+        items:
+          $ref: '#/definitions/AmazonECSContainer'
       availability_zone:
         description: AvailabilityZone
+        type: string
+      cpu:
+        description: Limited CPU
+        type: string
+      memory:
+        description: Limited memory
+        type: string
+      pullStartedAt:
+        description: PullStartedAt
+        type: string
+  AmazonECSContainer:
+    description: ECS container information
+    required:
+      - name
+      - image_name
+    properties:
+      id:
+        description: ContainerID
+        type: string
+      name:
+        description: ContainerName
+        type: string
+      type:
+        description: Container Type
+        type: string
+      docker_name:
+        description: DockerContainerName
         type: string
       image_id:
         description: ImageID
@@ -589,7 +623,6 @@ definitions:
           required:
             - container_port
             - host_port
-            - bind_ip
             - protocol
           properties:
             container_port:
@@ -619,6 +652,27 @@ definitions:
             ipv4_addresses:
               description: IPv4Addresses
               type: string
+            ipv6_addresses:
+              description: IPv4Addresses
+              type: string
+      desired:
+        description: DesiredStatus
+        type: string
+      known:
+        description: KnownStatus
+        type: string
+      cpu:
+        description: Limited CPU
+        type: string
+      memory:
+        description: Limited memory
+        type: string
+      createdAt:
+        description: CreatedAt
+        type: string
+      startedAt:
+        description: StartedAt
+        type: string
   Error:
     required:
       - code

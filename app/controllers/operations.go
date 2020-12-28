@@ -44,7 +44,7 @@ func everything(r *http.Request) *models.Everything {
 		return strings.ToLower(envs[i]) < strings.ToLower(envs[j])
 	})
 	var aws *models.AWS
-	if candidate, found := getAWSInformation(); found {
+	if candidate, found := getAWSInformation(r.Context()); found {
 		aws = &candidate
 	}
 	return &models.Everything{

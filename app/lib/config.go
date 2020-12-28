@@ -9,6 +9,7 @@ type config struct {
 	AccessLog       bool // ACCESS_LOG
 	AccessDetailLog bool // ACCESS_DETAIL_LOG
 	ContentEncoding bool // CONTENT_ENCODING
+	EnabledAWS      bool // ENABLE_AWS
 }
 
 // Config represents its configurations
@@ -31,9 +32,14 @@ func setup() {
 	if b, err := strconv.ParseBool(os.Getenv("CONTENT_ENCODING")); err == nil {
 		contentEncoding = b
 	}
+	enableAWS := true
+	if b, err := strconv.ParseBool(os.Getenv("ENABLE_AWS")); err == nil {
+		enableAWS = b
+	}
 	Config = &config{
 		AccessLog:       accessLog,
 		AccessDetailLog: accessDetailLog,
 		ContentEncoding: contentEncoding,
+		EnabledAWS:      enableAWS,
 	}
 }

@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -22,7 +23,7 @@ import (
 )
 
 func getAWS(params aws.GetAWSParams) middleware.Responder {
-	info, found := getAWSInformation()
+	info, found := getAWSInformation(params.HTTPRequest.Context())
 	if !found {
 		code := http.StatusNotFound
 		return aws.NewGetAWSDefault(code).WithPayload(&models.Error{
@@ -34,7 +35,7 @@ func getAWS(params aws.GetAWSParams) middleware.Responder {
 }
 
 func getAmazonEC2(params aws.GetAmazonEC2Params) middleware.Responder {
-	meta, found := ec2InstanceMetadata()
+	meta, found := ec2InstanceMetadata(params.HTTPRequest.Context())
 	if !found {
 		code := http.StatusNotFound
 		return aws.NewGetAmazonEC2Default(code).WithPayload(&models.Error{
@@ -51,7 +52,7 @@ func getAmazonEC2Field(params aws.GetAmazonEC2FieldParams) middleware.Responder 
 		Code:    swag.String(strconv.FormatInt(int64(code), 10)),
 		Message: swag.String(http.StatusText(code)),
 	})
-	meta, found := ec2InstanceMetadata()
+	meta, found := ec2InstanceMetadata(params.HTTPRequest.Context())
 	if !found {
 		return notfound
 	}
@@ -82,7 +83,7 @@ func getAmazonEC2Field(params aws.GetAmazonEC2FieldParams) middleware.Responder 
 }
 
 func getAmazonECS(params aws.GetAmazonECSParams) middleware.Responder {
-	meta, found := ecsContainerMetadata()
+	meta, found := ecsContainerMetadata(params.HTTPRequest.Context())
 	if !found {
 		code := http.StatusNotFound
 		return aws.NewGetAmazonECSDefault(code).WithPayload(&models.Error{
@@ -99,27 +100,27 @@ func getAmazonECSField(params aws.GetAmazonECSFieldParams) middleware.Responder 
 		Code:    swag.String(strconv.FormatInt(int64(code), 10)),
 		Message: swag.String(http.StatusText(code)),
 	})
-	meta, found := ecsContainerMetadata()
+	meta, found := ecsContainerMetadata(params.HTTPRequest.Context())
 	if !found {
 		return notfound
 	}
 	switch params.Key {
 	case "cluster":
-		return aws.NewGetAmazonECSFieldOK().WithPayload(meta.Cluster)
+		return aws.NewGetAmazonECSFieldOK().WithPayload(swag.StringValue(meta.Cluster))
 	case "container_id":
-		return aws.NewGetAmazonECSFieldOK().WithPayload(meta.ContainerID)
+		return aws.NewGetAmazonECSFieldOK().WithPayload(meta.Containers[0].ID)
 	case "container_name":
-		return aws.NewGetAmazonECSFieldOK().WithPayload(swag.StringValue(meta.ContainerName))
+		return aws.NewGetAmazonECSFieldOK().WithPayload(swag.StringValue(meta.Containers[0].Name))
 	case "container_instance_arn":
-		return aws.NewGetAmazonECSFieldOK().WithPayload(swag.StringValue(meta.ContainerInstanceArn))
+		return aws.NewGetAmazonECSFieldOK().WithPayload(meta.ContainerInstanceArn)
 	case "docker_container_name":
-		return aws.NewGetAmazonECSFieldOK().WithPayload(meta.DockerContainerName)
+		return aws.NewGetAmazonECSFieldOK().WithPayload(meta.Containers[0].DockerName)
 	case "availability_zone":
 		return aws.NewGetAmazonEC2FieldOK().WithPayload(meta.AvailabilityZone)
 	case "image_id":
-		return aws.NewGetAmazonECSFieldOK().WithPayload(meta.ImageID)
+		return aws.NewGetAmazonECSFieldOK().WithPayload(meta.Containers[0].ImageID)
 	case "image_name":
-		return aws.NewGetAmazonECSFieldOK().WithPayload(meta.ImageName)
+		return aws.NewGetAmazonECSFieldOK().WithPayload(swag.StringValue(meta.Containers[0].ImageName))
 	case "task_arn":
 		return aws.NewGetAmazonECSFieldOK().WithPayload(swag.StringValue(meta.TaskArn))
 	}
@@ -128,30 +129,42 @@ func getAmazonECSField(params aws.GetAmazonECSFieldParams) middleware.Responder 
 
 const (
 	ec2InstanceMetadataPrefix  = "http://169.254.169.254/latest/meta-data/"
+	ec2InstanceAPIToken        = "http://169.254.169.254/latest/api/token"
+	v4ecsTaskMetadataEndpoint  = "ECS_CONTAINER_METADATA_URI_V4"
 	v3ecsTaskMetadataEndpoint  = "ECS_CONTAINER_METADATA_URI"
 	v2ecsTaskMetadataEndpoint  = "http://169.254.170.2/v2/metadata"
 	v1ecsContainerMetadataFile = "ECS_CONTAINER_METADATA_FILE"
 )
 
-func getAWSInformation() (models.AWS, bool) {
+func getAWSInformation(ctx context.Context) (models.AWS, bool) {
 	aws := models.AWS{}
-	if ec2, found := ec2InstanceMetadata(); found {
+	if ec2, found := ec2InstanceMetadata(ctx); found {
 		aws.Ec2 = &ec2
 	}
-	if ecs, found := ecsContainerMetadata(); found {
+	if ecs, found := ecsContainerMetadata(ctx); found {
 		aws.Ecs = ecs
 	}
 	return aws, !reflect.DeepEqual(aws, models.AWS{})
 }
 
-func ec2InstanceMetadata() (models.AmazonEC2, bool) {
+func ec2InstanceMetadata(ctx context.Context) (models.AmazonEC2, bool) {
+	ec2 := models.AmazonEC2{}
+	if !lib.Config.EnabledAWS {
+		return ec2, false
+	}
 	keys := []string{"instance-id", "placement/availability-zone", "iam/info",
 		"public-hostname", "public-ipv4", "local-hostname", "local-ipv4"}
 	client := &http.Client{
 		Transport: &http.Transport{MaxIdleConnsPerHost: len(keys)},
-		Timeout:   time.Duration(2) * time.Second,
+		Timeout:   time.Duration(250) * time.Millisecond,
 	}
-	ec2 := models.AmazonEC2{}
+	token := &http.Header{"X-aws-ec2-metadata-token-ttl-seconds": []string{"3600"}}
+	candidate, err := lib.HTTPPut(ctx, client, ec2InstanceAPIToken, token)
+	if err != nil {
+		return ec2, false
+	}
+	token = &http.Header{"X-aws-ec2-metadata-token": []string{string(candidate)}}
+
 	wg := &sync.WaitGroup{}
 	wg.Add(len(keys))
 
@@ -159,7 +172,7 @@ func ec2InstanceMetadata() (models.AmazonEC2, bool) {
 		go func(key string) {
 			defer wg.Done()
 
-			body, err := lib.HTTPGet(client, ec2InstanceMetadataPrefix+key)
+			body, err := lib.HTTPGet(ctx, client, ec2InstanceMetadataPrefix+key, token)
 			if err != nil {
 				return
 			}
@@ -195,22 +208,28 @@ func ec2InstanceMetadata() (models.AmazonEC2, bool) {
 	return ec2, !reflect.DeepEqual(ec2, models.AmazonEC2{})
 }
 
-func ecsContainerMetadata() (*models.AmazonECS, bool) {
-	if meta, found := ecsContainerMetadataV3(); found {
+func ecsContainerMetadata(ctx context.Context) (*models.AmazonECS, bool) {
+	if !lib.Config.EnabledAWS {
+		return nil, false
+	}
+	if meta, found := ecsContainerMetadataVx(ctx, v4ecsTaskMetadataEndpoint); found {
 		return meta, found
 	}
-	if meta, found := ecsContainerMetadataV2(); found {
+	if meta, found := ecsContainerMetadataVx(ctx, v3ecsTaskMetadataEndpoint); found {
 		return meta, found
 	}
-	return ecsContainerMetadataV1()
+	if meta, found := ecsContainerMetadataV2(ctx); found {
+		return meta, found
+	}
+	return ecsContainerMetadataV1(ctx)
 }
 
-func ecsContainerMetadataV3() (*models.AmazonECS, bool) {
-	if value, found := os.LookupEnv(v3ecsTaskMetadataEndpoint); found {
+func ecsContainerMetadataVx(ctx context.Context, endpoint string) (*models.AmazonECS, bool) {
+	if value, found := os.LookupEnv(endpoint); found {
 		client := &http.Client{
-			Timeout: time.Duration(2) * time.Second,
+			Timeout: time.Duration(250) * time.Millisecond,
 		}
-		body, err := lib.HTTPGet(client, value+"/task")
+		body, err := lib.HTTPGet(ctx, client, value+"/task", nil)
 		if err != nil {
 			log.Printf("Error: %s", err.Error())
 			return nil, false
@@ -225,11 +244,11 @@ func ecsContainerMetadataV3() (*models.AmazonECS, bool) {
 	return nil, false
 }
 
-func ecsContainerMetadataV2() (*models.AmazonECS, bool) {
+func ecsContainerMetadataV2(ctx context.Context) (*models.AmazonECS, bool) {
 	client := &http.Client{
-		Timeout: time.Duration(2) * time.Second,
+		Timeout: time.Duration(250) * time.Millisecond,
 	}
-	body, err := lib.HTTPGet(client, v2ecsTaskMetadataEndpoint)
+	body, err := lib.HTTPGet(ctx, client, v2ecsTaskMetadataEndpoint, nil)
 	if err != nil {
 		return nil, false
 	}
@@ -241,7 +260,7 @@ func ecsContainerMetadataV2() (*models.AmazonECS, bool) {
 	return meta.ToAmazonECS(), true
 }
 
-func ecsContainerMetadataV1() (*models.AmazonECS, bool) {
+func ecsContainerMetadataV1(ctx context.Context) (*models.AmazonECS, bool) {
 	if value, found := os.LookupEnv(v1ecsContainerMetadataFile); found {
 		file, err := ioutil.ReadFile(value)
 		if err != nil {
