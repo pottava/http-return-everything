@@ -12,6 +12,12 @@ type config struct {
 	EnabledAWS      bool // ENABLE_AWS
 }
 
+var (
+	ver    = "dev"
+	commit string
+	date   string
+)
+
 // Config represents its configurations
 var Config *config
 

@@ -4,6 +4,7 @@ import (
 	"compress/gzip"
 	"compress/zlib"
 	"encoding/json"
+	"fmt"
 	"io"
 	"log"
 	"net/http"
@@ -20,6 +21,13 @@ func Wrap(handler http.Handler) http.Handler {
 		switch {
 		case eqauls(r, "/health"):
 			w.WriteHeader(http.StatusOK)
+
+		case eqauls(r, "/version"):
+			if len(commit) > 0 && len(date) > 0 {
+				fmt.Fprintf(w, "%s-%s (built at %s)\n", ver, commit, date)
+				return
+			}
+			fmt.Fprintln(w, ver)
 
 		default:
 			proc := time.Now()
@@ -91,7 +99,7 @@ func header(r *http.Request, key string) (values []string, found bool) {
 }
 
 func splitCsvLine(data string) []string {
-	splitted := strings.SplitN(data, ",", -1)
+	splitted := strings.Split(data, ",")
 	parsed := make([]string, len(splitted))
 	for i, val := range splitted {
 		parsed[i] = strings.TrimSpace(val)

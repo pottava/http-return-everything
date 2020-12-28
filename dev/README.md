@@ -6,12 +6,6 @@
 $ docker-compose -f dev/tools.yml run --rm codegen
 ```
 
-## Resolve dependencies with golang/dep
-
-```
-$ docker-compose -f dev/tools.yml run --rm deps
-```
-
 ## Run the application
 
 ```
