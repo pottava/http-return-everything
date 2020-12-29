@@ -129,7 +129,7 @@ func getAmazonECSField(params aws.GetAmazonECSFieldParams) middleware.Responder 
 
 const (
 	ec2InstanceMetadataPrefix  = "http://169.254.169.254/latest/meta-data/"
-	ec2InstanceAPIToken        = "http://169.254.169.254/latest/api/token"
+	ec2InstanceAPIToken        = "http://169.254.169.254/latest/api/token" // nolint:gosec
 	v4ecsTaskMetadataEndpoint  = "ECS_CONTAINER_METADATA_URI_V4"
 	v3ecsTaskMetadataEndpoint  = "ECS_CONTAINER_METADATA_URI"
 	v2ecsTaskMetadataEndpoint  = "http://169.254.170.2/v2/metadata"

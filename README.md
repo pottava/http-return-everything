@@ -1,10 +1,11 @@
 # Retrieving server context - A REST API server
 
-[![pottava/http-re](http://dockeri.co/image/pottava/http-re)](https://hub.docker.com/r/pottava/http-re/)
+[gcr.io/pottava/re](https://gcr.io/pottava/re/)
 
 Supported tags and respective `Dockerfile` links:  
-・latest ([prod/1.3/Dockerfile](https://github.com/pottava/http-return-everything/blob/master/prod/1.3/Dockerfile))  
-・1.3 ([prod/1.3/Dockerfile](https://github.com/pottava/http-return-everything/blob/master/prod/1.3/Dockerfile))  
+・latest ([prod/2.0/Dockerfile](https://github.com/pottava/http-return-everything/blob/master/prod/2.0/Dockerfile))  
+・v2.0 ([prod/2.0/Dockerfile](https://github.com/pottava/http-return-everything/blob/master/prod/2.0/Dockerfile))  
+・v1.3 ([prod/1.3/Dockerfile](https://github.com/pottava/http-return-everything/blob/master/prod/1.3/Dockerfile))  
 
 ## Usage
 
@@ -12,37 +13,52 @@ Supported tags and respective `Dockerfile` links:
 
 Environment Variables     | Description                                       |
 ------------------------- | ------------------------------------------------- |
-API_PORT                  | Listening port. (default: 8080) | 
+PORT                      | Listening port. (default: 8080) | 
+ENABLE_AWS                | Enable the AWS metadata endpoint. (default: true) | 
+ENABLE_GCP                | Enable the Google Cloud metadata endpoint. (default: true) | 
 ACCESS_LOG                | Send access logs to /dev/stdout. (default: true) | 
 ACCESS_DETAIL_LOG         | Save HTTP request details (default: false) | 
 CONTENT_ENCODING          | Compress response data if the request allows. (default: true) |
 
 ### 2. Run the application
 
-`$ docker run -d -p 80:8080 pottava/http-re:1.3`
+`$ docker run -d -p 80:8080 gcr.io/pottava/re:v2.0`
+
+* with Google [Cloud Run](https://cloud.google.com/run):  
+
+```bash
+$ gcloud run deploy re --allow-unauthenticated \
+    --image gcr.io/pottava/re:v2.0 \
+    --set-env-vars ENABLE_AWS=0
+```
 
 * with docker-compose.yml:  
 
 ```yaml
 check:
-  image: pottava/http-re:1.3
+  image: gcr.io/pottava/re:v2.0
   ports:
     - 80:8080
   environment:
+    - ENABLE_AWS=false
+    - ENABLE_GCP=false
     - ACCESS_LOG=false
     - CONTENT_ENCODING=false
   container_name: check
 ```
 
-* with kubernetes-deployment.yaml
+* with Kubernetes deployment.yaml
 
 ```yaml
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: my-app
 spec:
   replicas: 1
+  selector:
+    matchLabels:
+      app: my-app
   template:
     metadata:
       labels:
@@ -50,7 +66,7 @@ spec:
     spec:
       containers:
       - name: api
-        image: pottava/http-re:1.3
+        image: gcr.io/pottava/re:v2.0
         imagePullPolicy: Always
         ports:
         - protocol: TCP

@@ -1,0 +1,33 @@
+name: Publish artifacts
+
+on:
+  push:
+    tags:
+    - "*"
+
+jobs:
+  release-2-0:
+    name: v2.0
+    if: github.event_name == 'push' && contains(github.ref, 'v2.0.')
+    runs-on: ubuntu-18.04
+    env:
+      IMAGE_NAME: gcr.io/pottava/re:v2.0
+    steps:
+    - name: Set up Cloud SDK
+      uses: google-github-actions/setup-gcloud@v0.2.0
+      with:
+        project_id: ${{ secrets.gcp_project }}
+        service_account_key: ${{ secrets.gcp_credentials }}
+        export_default_credentials: true
+    - uses: actions/checkout@v2
+      with:
+        fetch-depth: 1
+    - name: Build
+      run: |
+        docker build --tag "${IMAGE_NAME}" \
+          --file prod/2.0/Dockerfile .
+    - name: Push
+      run: |
+        gcloud --quiet auth configure-docker
+        docker push "${IMAGE_NAME}"
+    timeout-minutes: 10

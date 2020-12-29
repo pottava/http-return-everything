@@ -131,7 +131,7 @@ func gceInstanceMetadata(ctx context.Context) (*models.GoogleComputeEngine, bool
 		}(meta)
 	}
 	wg.Wait()
-	return gce, !reflect.DeepEqual(gce, models.GoogleComputeEngine{})
+	return gce, !reflect.DeepEqual(*gce, models.GoogleComputeEngine{})
 }
 
 func gkeInstanceMetadata(ctx context.Context) (*models.GoogleKubernetesEngine, bool) {

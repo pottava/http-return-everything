@@ -6,6 +6,12 @@
 $ docker-compose -f dev/tools.yml run --rm codegen
 ```
 
+## Vendoring go dependencies
+
+```
+$ docker-compose -f dev/tools.yml run --rm vendor
+```
+
 ## Run the application
 
 ```
