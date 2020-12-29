@@ -387,6 +387,113 @@ paths:
           description: Unexpected error
           schema:
             $ref: '#/definitions/Error'
+  /googlecloud:
+    get:
+      description: |
+        returns information about Google Cloud
+      operationId: getGoogleCloud
+      tags:
+        - google
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/GoogleCloud'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /googlecloud/gce:
+    get:
+      description: |
+        returns information about Google Compute Engine instance
+      operationId: getGoogleComputeEngine
+      tags:
+        - google
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/GoogleComputeEngine'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  '/googlecloud/gce/{key}':
+    get:
+      description: |
+        returns specified information about Google Compute Engine instance
+      operationId: getGoogleComputeEngineField
+      tags:
+        - google
+      parameters:
+        - name: key
+          in: path
+          description: Can specify a field
+          required: true
+          type: string
+          enum:
+            - numeric_project_id
+            - project_id
+            - cpu_platform
+            - instance_hostname
+            - instance_id
+            - instance_name
+            - machine_type
+            - service_accounts
+            - tags
+            - zone
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: string
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /googlecloud/gke:
+    get:
+      description: |
+        returns information about Google Kubernetes Engine instance
+      operationId: getGoogleKubernetesEngine
+      tags:
+        - google
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/GoogleKubernetesEngine'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  '/googlecloud/gke/{key}':
+    get:
+      description: |
+        returns specified information about Google Kubernetes Engine instance
+      operationId: getGoogleKubernetesEngineField
+      tags:
+        - google
+      parameters:
+        - name: key
+          in: path
+          description: Can specify a field
+          required: true
+          type: string
+          enum:
+            - cluster_location
+            - cluster_name
+            - cluster_uid
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: string
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
 definitions:
   Everything:
     description: application context
@@ -403,6 +510,8 @@ definitions:
         $ref: '#/definitions/HTTPRequest'
       aws:
         $ref: '#/definitions/AWS'
+      googlecloud:
+        $ref: '#/definitions/GoogleCloud'
   Application:
     description: Application information
     required:
@@ -514,6 +623,7 @@ definitions:
         $ref: '#/definitions/AmazonECS'
   AmazonEC2:
     description: ec2 metadata
+    # https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/instancedata-data-retrieval.html
     properties:
       instance_id:
         description: instance-id
@@ -549,6 +659,7 @@ definitions:
           type: string
   AmazonECS:
     description: ecs information when environment variables contain ECS_CONTAINER_METADATA_FILE
+    # https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task-metadata-endpoint-v4.html
     required:
       - cluster
       - task_arn
@@ -588,7 +699,7 @@ definitions:
       memory:
         description: Limited memory
         type: string
-      pullStartedAt:
+      pull_started_at:
         description: PullStartedAt
         type: string
   AmazonECSContainer:
@@ -667,12 +778,87 @@ definitions:
       memory:
         description: Limited memory
         type: string
-      createdAt:
+      created_at:
         description: CreatedAt
         type: string
-      startedAt:
+      started_at:
         description: StartedAt
         type: string
+  GoogleCloud:
+    description: GoogleCloud information
+    properties:
+      gce:
+        $ref: '#/definitions/GoogleComputeEngine'
+      gke:
+        $ref: '#/definitions/GoogleKubernetesEngine'
+  GoogleComputeEngine:
+    description: Google Compute Engine (GCE) information
+    # https://cloud.google.com/compute/docs/storing-retrieving-metadata#querying
+    required:
+      - project_id
+      - instance_id
+    properties:
+      project_id:
+        description: Project ID
+        type: string
+      numeric_project_id:
+        description: Numeric project ID
+        type: string
+      enable_os_login:
+        description: OS Login
+        type: string
+      instance_hostname:
+        description: Instance hostname
+        type: string
+      instance_id:
+        description: Instance ID
+        type: string
+      instance_name:
+        description: Instance name
+        type: string
+      machine_type:
+        description: Instance machine-type
+        type: string
+      cpu_platform:
+        description: CPU platform
+        type: string
+      service_accounts:
+        description: IAM ServiceAccounts
+        type: array
+        items:
+          $ref: '#/definitions/GoogleServiceAccount'
+      tags:
+        description: Instance tags
+        type: array
+        items:
+          type: string
+      zone:
+        description: Instance zone
+        type: string
+  GoogleKubernetesEngine:
+    description: Google Kubernetes Engine (GKE) information
+    # https://cloud.google.com/kubernetes-engine/docs/how-to/workload-identity#gke_mds
+    properties:
+      cluster_uid:
+        description: Cluster UID
+        type: string
+      cluster_name:
+        description: Cluster name
+        type: string
+      cluster_location:
+        description: Cluster location
+        type: string
+  GoogleServiceAccount:
+    description: Google Cloud service account information
+    properties:
+      email:
+        description: ServiceAccount's email
+        type: string
+      scopes:
+        description: ServiceAccount's scopes
+        type: array
+        items:
+          type: string
   Error:
     required:
       - code

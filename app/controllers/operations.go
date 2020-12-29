@@ -6,6 +6,7 @@ import (
 	"os"
 	"sort"
 	"strings"
+	"sync"
 
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/go-openapi/swag"
@@ -18,35 +19,53 @@ func getEverything(params operations.GetEverythingParams) middleware.Responder {
 }
 
 func everything(r *http.Request) *models.Everything {
+	envs := os.Environ()
+	hosts := []string{}
+	resolv := []string{}
+	var aws *models.AWS
+	var gcp *models.GoogleCloud
+
+	wg := &sync.WaitGroup{}
+	wg.Add(3)
+
+	go func() {
+		defer wg.Done()
+		if data, err := ioutil.ReadFile("/etc/hosts"); err == nil {
+			for _, candidate := range strings.Split(string(data), "\n") {
+				if candidate != "" {
+					hosts = append(hosts, candidate)
+				}
+			}
+		}
+		if data, err := ioutil.ReadFile("/etc/resolv.conf"); err == nil {
+			for _, candidate := range strings.Split(string(data), "\n") {
+				if candidate != "" {
+					resolv = append(resolv, candidate)
+				}
+			}
+		}
+		sort.Slice(envs, func(i, j int) bool {
+			return strings.ToLower(envs[i]) < strings.ToLower(envs[j])
+		})
+	}()
+	go func() {
+		defer wg.Done()
+		if candidate, found := getAWSInformation(r.Context()); found {
+			aws = &candidate
+		}
+	}()
+	go func() {
+		defer wg.Done()
+		if candidate, found := getGoogleCloudInformation(r.Context()); found {
+			gcp = &candidate
+		}
+	}()
+	wg.Wait()
+
 	host, _ := os.Hostname()
 	wd, _ := os.Getwd()
-
-	hosts := []string{}
-	if data, err := ioutil.ReadFile("/etc/hosts"); err == nil {
-		for _, candidate := range strings.Split(string(data), "\n") {
-			if candidate != "" {
-				hosts = append(hosts, candidate)
-			}
-		}
-	}
-	resolv := []string{}
-	if data, err := ioutil.ReadFile("/etc/resolv.conf"); err == nil {
-		for _, candidate := range strings.Split(string(data), "\n") {
-			if candidate != "" {
-				resolv = append(resolv, candidate)
-			}
-		}
-	}
 	r.ParseForm()
 
-	envs := os.Environ()
-	sort.Slice(envs, func(i, j int) bool {
-		return strings.ToLower(envs[i]) < strings.ToLower(envs[j])
-	})
-	var aws *models.AWS
-	if candidate, found := getAWSInformation(r.Context()); found {
-		aws = &candidate
-	}
 	return &models.Everything{
 		App: &models.Application{
 			Args:    os.Args,
@@ -70,6 +89,7 @@ func everything(r *http.Request) *models.Everything {
 			Form:       r.Form,
 			PostForm:   r.PostForm,
 		},
-		Aws: aws,
+		Aws:         aws,
+		Googlecloud: gcp,
 	}
 }

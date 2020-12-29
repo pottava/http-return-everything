@@ -5,6 +5,7 @@ import (
 	"github.com/pottava/http-return-everything/app/generated/restapi/operations"
 	"github.com/pottava/http-return-everything/app/generated/restapi/operations/application"
 	"github.com/pottava/http-return-everything/app/generated/restapi/operations/aws"
+	"github.com/pottava/http-return-everything/app/generated/restapi/operations/google"
 	"github.com/pottava/http-return-everything/app/generated/restapi/operations/host"
 	"github.com/pottava/http-return-everything/app/generated/restapi/operations/request"
 )
@@ -33,4 +34,10 @@ func Routes(api *operations.ReturnEverythingAPI) {
 	api.AwsGetAmazonEC2FieldHandler = aws.GetAmazonEC2FieldHandlerFunc(getAmazonEC2Field)
 	api.AwsGetAmazonECSHandler = aws.GetAmazonECSHandlerFunc(getAmazonECS)
 	api.AwsGetAmazonECSFieldHandler = aws.GetAmazonECSFieldHandlerFunc(getAmazonECSField)
+
+	api.GoogleGetGoogleCloudHandler = google.GetGoogleCloudHandlerFunc(getGoogleCloud)
+	api.GoogleGetGoogleComputeEngineHandler = google.GetGoogleComputeEngineHandlerFunc(getGoogleComputeEngine)
+	api.GoogleGetGoogleComputeEngineFieldHandler = google.GetGoogleComputeEngineFieldHandlerFunc(getGoogleComputeEngineField)
+	api.GoogleGetGoogleKubernetesEngineHandler = google.GetGoogleKubernetesEngineHandlerFunc(getGoogleKubernetesEngine)
+	api.GoogleGetGoogleKubernetesEngineFieldHandler = google.GetGoogleKubernetesEngineFieldHandlerFunc(getGoogleKubernetesEngineField)
 }

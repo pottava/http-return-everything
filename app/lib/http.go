@@ -7,10 +7,12 @@ import (
 	"time"
 )
 
+const retryCount = 1
+
 // HTTPGet send a HTTP request
 func HTTPGet(ctx context.Context, client *http.Client, endpoint string, headers *http.Header) ([]byte, error) {
 	var err error
-	for i := 0; i < 3; i++ {
+	for i := 0; i < retryCount; i++ {
 		resp, e := httpGetOnce(ctx, client, http.MethodGet, endpoint, headers)
 		if e == nil {
 			return resp, nil
@@ -24,7 +26,7 @@ func HTTPGet(ctx context.Context, client *http.Client, endpoint string, headers 
 // HTTPPut send a HTTP request
 func HTTPPut(ctx context.Context, client *http.Client, endpoint string, headers *http.Header) ([]byte, error) {
 	var err error
-	for i := 0; i < 3; i++ {
+	for i := 0; i < retryCount; i++ {
 		resp, e := httpGetOnce(ctx, client, http.MethodPut, endpoint, headers)
 		if e == nil {
 			return resp, nil

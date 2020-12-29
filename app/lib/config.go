@@ -10,6 +10,7 @@ type config struct {
 	AccessDetailLog bool // ACCESS_DETAIL_LOG
 	ContentEncoding bool // CONTENT_ENCODING
 	EnabledAWS      bool // ENABLE_AWS
+	EnabledGCP      bool // ENABLE_GCP
 }
 
 var (
@@ -42,10 +43,15 @@ func setup() {
 	if b, err := strconv.ParseBool(os.Getenv("ENABLE_AWS")); err == nil {
 		enableAWS = b
 	}
+	enableGCP := true
+	if b, err := strconv.ParseBool(os.Getenv("ENABLE_GCP")); err == nil {
+		enableGCP = b
+	}
 	Config = &config{
 		AccessLog:       accessLog,
 		AccessDetailLog: accessDetailLog,
 		ContentEncoding: contentEncoding,
 		EnabledAWS:      enableAWS,
+		EnabledGCP:      enableGCP,
 	}
 }
