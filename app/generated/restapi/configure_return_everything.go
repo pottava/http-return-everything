@@ -7,15 +7,14 @@ import (
 	"log"
 	"net/http"
 
-	errors "github.com/go-openapi/errors"
-	runtime "github.com/go-openapi/runtime"
-
+	"github.com/go-openapi/errors"
+	"github.com/go-openapi/runtime"
 	"github.com/pottava/http-return-everything/app/controllers"
 	"github.com/pottava/http-return-everything/app/generated/restapi/operations"
 	"github.com/pottava/http-return-everything/app/lib"
 )
 
-//go:generate swagger generate server --target ../app/generated --name  --spec ../spec.yaml
+//go:generate swagger generate server --target ../../generated --name ReturnEverything --spec ../../../spec.yaml --principal interface{}
 
 func configureFlags(api *operations.ReturnEverythingAPI) {
 	// api.CommandLineOptionsGroups = []swag.CommandLineOptionsGroup{ ... }
@@ -28,9 +27,12 @@ func configureAPI(api *operations.ReturnEverythingAPI) http.Handler {
 	api.Logger = log.Printf
 	controllers.Routes(api)
 
+	api.UseSwaggerUI()
+
 	api.JSONConsumer = runtime.JSONConsumer()
 	api.JSONProducer = runtime.JSONProducer()
 
+	api.PreServerShutdown = func() {}
 	api.ServerShutdown = func() {}
 
 	return setupGlobalMiddleware(api.Serve(setupMiddlewares))

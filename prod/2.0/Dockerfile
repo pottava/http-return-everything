@@ -7,7 +7,7 @@ RUN git clone --depth=1 -b "${APP_VERSION}" "https://${APP_PACKAGE}.git"
 WORKDIR /go/src/github.com/pottava/http-return-everything
 RUN mv prod/2.0/entrypoint.sh /entrypoint.sh
 RUN git rev-parse --short HEAD 2>/dev/null > app/githash
-COPY --from=supinf/go-swagger:0.16.0 /usr/bin/swagger /usr/bin/
+COPY --from=ghcr.io/supinf/go-swagger:0.25 /usr/bin/swagger /usr/bin/
 RUN swagger generate server -f spec.yaml -t app/generated
 WORKDIR /go/src/github.com/pottava/http-return-everything/app
 RUN go mod download
@@ -16,7 +16,7 @@ RUN CGO_ENABLED=0 GOOS="${GOOS:-linux}" GOARCH="${GOARCH:-amd64}"; \
     ldflags="-s -w \
       -X \"${APP_PACKAGE}/app/lib.ver=${APP_VERSION}\" \
       -X \"${APP_PACKAGE}/app/lib.commit=$( cat githash )\" \
-      -X \"${APP_PACKAGE}/app/lib.date=$( date +%Y-%m-%d --utc )\" \
+      -X \"${APP_PACKAGE}/app/lib.date=$( date +%Y-%m-%dT%H:%M:%SZ --utc )\" \
     "; \
     go build -ldflags "${ldflags}" -o /app \
     generated/cmd/return-everything-server/main.go

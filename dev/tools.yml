@@ -1,9 +1,9 @@
-version: "2.1"
+version: "2.4"
 
 services:
   # docker-compose -f dev/tools.yml run --rm codegen
   codegen:
-    image: supinf/go-swagger:0.16.0
+    image: ghcr.io/supinf/go-swagger:0.25
     command: generate server -f spec.yaml -t app/generated
     volumes:
       - ..:/go/src/github.com/pottava/http-return-everything

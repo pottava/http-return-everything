@@ -1,0 +1,31 @@
+project_name: http-re
+env:
+  - GO111MODULE=on
+builds:
+  - main: generated/cmd/return-everything-server/main.go
+    dir: app
+    binary: http-re
+    goos:
+      - linux
+      - windows
+      - darwin
+    ldflags:
+      - -s -w
+      - -X github.com/pottava/http-return-everything/app/lib.ver={{.Version}}
+      - -X github.com/pottava/http-return-everything/app/lib.commit={{.ShortCommit}}
+      - -X github.com/pottava/http-return-everything/app/lib.date={{.Date}}
+    env:
+      - CGO_ENABLED=0
+archives:
+  - name_template: '{{ .ProjectName }}_{{ .Os }}_{{ .Arch }}{{ if .Arm }}v{{ .Arm }}{{ end }}'
+    replacements:
+      darwin: darwin
+      linux: linux
+      windows: windows
+      386: i386
+      amd64: x86_64
+    format_overrides:
+      - goos: windows
+        format: zip
+release:
+  prerelease: auto
