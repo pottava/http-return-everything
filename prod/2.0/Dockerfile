@@ -5,7 +5,6 @@ ENV APP_PACKAGE="github.com/pottava/http-return-everything" \
     APP_VERSION=v2.0.0
 RUN git clone --depth=1 -b "${APP_VERSION}" "https://${APP_PACKAGE}.git"
 WORKDIR /go/src/github.com/pottava/http-return-everything
-RUN mv prod/2.0/entrypoint.sh /entrypoint.sh
 RUN git rev-parse --short HEAD 2>/dev/null > app/githash
 COPY --from=ghcr.io/supinf/go-swagger:0.25 /usr/bin/swagger /usr/bin/
 RUN swagger generate server -f spec.yaml -t app/generated
@@ -20,12 +19,9 @@ RUN CGO_ENABLED=0 GOOS="${GOOS:-linux}" GOARCH="${GOARCH:-amd64}"; \
     "; \
     go build -ldflags "${ldflags}" -o /app \
     generated/cmd/return-everything-server/main.go
-RUN chmod +x /entrypoint.sh /app
 
 FROM alpine:3.12
 RUN apk --no-cache add tini ca-certificates
-COPY --from=builder /entrypoint.sh /entrypoint.sh
 COPY --from=builder /app /app
-ENV PORT=8080
-ENTRYPOINT ["tini", "--"]
-CMD ["/entrypoint.sh"]
+ENV HOST=0.0.0.0 PORT=8080
+ENTRYPOINT ["tini", "--", "/app"]

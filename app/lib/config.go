@@ -6,11 +6,12 @@ import (
 )
 
 type config struct {
-	AccessLog       bool // ACCESS_LOG
-	AccessDetailLog bool // ACCESS_DETAIL_LOG
-	ContentEncoding bool // CONTENT_ENCODING
-	EnabledAWS      bool // ENABLE_AWS
-	EnabledGCP      bool // ENABLE_GCP
+	CORSOrigin      string // CORS_ORIGIN
+	AccessLog       bool   // ACCESS_LOG
+	AccessDetailLog bool   // ACCESS_DETAIL_LOG
+	ContentEncoding bool   // CONTENT_ENCODING
+	EnabledAWS      bool   // ENABLE_AWS
+	EnabledGCP      bool   // ENABLE_GCP
 }
 
 var (
@@ -39,6 +40,10 @@ func setup() {
 	if b, err := strconv.ParseBool(os.Getenv("CONTENT_ENCODING")); err == nil {
 		contentEncoding = b
 	}
+	corsOrigin := ""
+	if candidate, found := os.LookupEnv("CORS_ORIGIN"); found {
+		corsOrigin = candidate
+	}
 	enableAWS := true
 	if b, err := strconv.ParseBool(os.Getenv("ENABLE_AWS")); err == nil {
 		enableAWS = b
@@ -51,6 +56,7 @@ func setup() {
 		AccessLog:       accessLog,
 		AccessDetailLog: accessDetailLog,
 		ContentEncoding: contentEncoding,
+		CORSOrigin:      corsOrigin,
 		EnabledAWS:      enableAWS,
 		EnabledGCP:      enableGCP,
 	}

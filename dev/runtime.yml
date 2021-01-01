@@ -6,12 +6,25 @@ services:
     image: golang:1.15.6-alpine3.12
     command: go run generated/cmd/return-everything-server/main.go --host 0.0.0.0 --port 8080
     ports:
-      - 9000:8080
+      - 8080:8080
     volumes:
       - ..:/go/src/github.com/pottava/http-return-everything
     environment:
       - ACCESS_LOG
       - ACCESS_DETAIL_LOG
       - CONTENT_ENCODING
+      - CORS_ORIGIN=*
+      - ENABLE_AWS=false
+      - ENABLE_GCP=false
     working_dir: /go/src/github.com/pottava/http-return-everything/app
     container_name: api
+
+  editor:
+    image: swaggerapi/swagger-editor:v3.14.8
+    ports:
+      - 9000:8080
+    environment:
+      - SWAGGER_FILE=/spec/spec.yaml
+    volumes:
+      - ..:/spec
+    container_name: editor

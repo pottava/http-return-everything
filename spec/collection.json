@@ -1,0 +1,2350 @@
+{
+	"info": {
+		"_postman_id": "650d2c5a-f89a-4159-844b-64a81d0bd0b1",
+		"name": "return-everything",
+		"description": "It returns environment variables, HTTP request headers and so on.\n",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "app",
+			"item": [
+				{
+					"name": "envs",
+					"item": [
+						{
+							"name": "get App Envs",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"tests[\"Successful HTTP request\"] = responseCode.code === 200;",
+											"tests[\"Status code name has string\"] = responseCode.name.has(\"OK\");",
+											"",
+											"var data = JSON.parse(responseBody);",
+											"tests[\"Environment variables are more than 2\"] = data.length > 2;",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/app/envs",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"app",
+										"envs"
+									]
+								},
+								"description": "returns environment variables\n"
+							},
+							"response": [
+								{
+									"name": "OK",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/app/envs",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"app",
+												"envs"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "[\n \"<string>\",\n \"<string>\"\n]"
+								},
+								{
+									"name": "Unexpected error",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/app/envs",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"app",
+												"envs"
+											]
+										}
+									},
+									"status": "Internal Server Error",
+									"code": 500,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n \"code\": \"<string>\",\n \"message\": \"<string>\"\n}"
+								}
+							]
+						},
+						{
+							"name": "get App Env",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"tests[\"Successful HTTP request\"] = responseCode.code === 200;",
+											"tests[\"Status code name has string\"] = responseCode.name.has(\"OK\");",
+											"",
+											"tests[\"HOME should be /root\"] = responseBody.indexOf(\"/root\") > -1;",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/app/envs/:env",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"app",
+										"envs",
+										":env"
+									],
+									"variable": [
+										{
+											"key": "env",
+											"value": "HOME",
+											"description": "Specify an environment variable"
+										}
+									]
+								},
+								"description": "returns an environment variable\n"
+							},
+							"response": [
+								{
+									"name": "OK",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/app/envs/:env",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"app",
+												"envs",
+												":env"
+											],
+											"variable": [
+												{
+													"key": "env"
+												}
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "\"<string>\""
+								},
+								{
+									"name": "Unexpected error",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/app/envs/:env",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"app",
+												"envs",
+												":env"
+											],
+											"variable": [
+												{
+													"key": "env"
+												}
+											]
+										}
+									},
+									"status": "Internal Server Error",
+									"code": 500,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n \"code\": \"<string>\",\n \"message\": \"<string>\"\n}"
+								}
+							]
+						}
+					]
+				},
+				{
+					"name": "get App",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"tests[\"Successful HTTP request\"] = responseCode.code === 200;",
+									"tests[\"Status code name has string\"] = responseCode.name.has(\"OK\");",
+									"",
+									"var data = JSON.parse(responseBody);",
+									"tests[\"Arguments have 5 elements\"] = data.args.length == 5;",
+									"tests[\"User is root\"] = data.user == 0;",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/app",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"app"
+							]
+						},
+						"description": "returns application information\n"
+					},
+					"response": [
+						{
+							"name": "OK",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/app",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"app"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n \"args\": [\n  \"<string>\",\n  \"<string>\"\n ],\n \"envs\": [\n  \"<string>\",\n  \"<string>\"\n ],\n \"grp\": \"<long>\",\n \"user\": \"<long>\",\n \"workdir\": \"<string>\"\n}"
+						},
+						{
+							"name": "Unexpected error",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/app",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"app"
+									]
+								}
+							},
+							"status": "Internal Server Error",
+							"code": 500,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n \"code\": \"<string>\",\n \"message\": \"<string>\"\n}"
+						}
+					]
+				},
+				{
+					"name": "get App Field",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"tests[\"Successful HTTP request\"] = responseCode.code === 200;",
+									"tests[\"Status code name has string\"] = responseCode.name.has(\"OK\");",
+									"",
+									"tests[\"Response contains the app name\"] = responseBody.indexOf('http-return') > 0;",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/app/:key",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"app",
+								":key"
+							],
+							"variable": [
+								{
+									"key": "key",
+									"value": "workdir",
+									"description": "Specify one of application attributes"
+								}
+							]
+						},
+						"description": "returns application specified information\n"
+					},
+					"response": [
+						{
+							"name": "Unexpected error",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/app/:key",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"app",
+										":key"
+									],
+									"variable": [
+										{
+											"key": "key"
+										}
+									]
+								}
+							},
+							"status": "Internal Server Error",
+							"code": 500,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n \"code\": \"<string>\",\n \"message\": \"<string>\"\n}"
+						},
+						{
+							"name": "OK",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/app/:key",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"app",
+										":key"
+									],
+									"variable": [
+										{
+											"key": "key"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "\"<string>\""
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "host",
+			"item": [
+				{
+					"name": "get Host",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"tests[\"Successful HTTP request\"] = responseCode.code === 200;",
+									"tests[\"Status code name has string\"] = responseCode.name.has(\"OK\");",
+									"",
+									"var data = JSON.parse(responseBody);",
+									"tests[\"It has a hostfile\"] = data.hosts.length > 0;",
+									"tests[\"It has own name\"] = data.name.length > 0;",
+									"tests[\"It has a resolv_conf\"] = data.resolv_conf.length > 0;",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/host",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"host"
+							]
+						},
+						"description": "returns host information\n"
+					},
+					"response": [
+						{
+							"name": "Unexpected error",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/host",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"host"
+									]
+								}
+							},
+							"status": "Internal Server Error",
+							"code": 500,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n \"code\": \"<string>\",\n \"message\": \"<string>\"\n}"
+						},
+						{
+							"name": "OK",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/host",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"host"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n \"name\": \"<string>\",\n \"hosts\": [\n  \"<string>\",\n  \"<string>\"\n ],\n \"resolv_conf\": [\n  \"<string>\",\n  \"<string>\"\n ]\n}"
+						}
+					]
+				},
+				{
+					"name": "get Host Field",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"tests[\"Successful HTTP request\"] = responseCode.code === 200;",
+									"tests[\"Status code name has string\"] = responseCode.name.has(\"OK\");",
+									"",
+									"var data = JSON.parse(responseBody);",
+									"tests[\"Resolv_conf has more than 1 record\"] = data.length > 1;",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/host/:key",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"host",
+								":key"
+							],
+							"variable": [
+								{
+									"key": "key",
+									"value": "resolv_conf",
+									"description": "Specify a host attribute"
+								}
+							]
+						},
+						"description": "returns host specified information\n"
+					},
+					"response": [
+						{
+							"name": "OK",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/host/:key",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"host",
+										":key"
+									],
+									"variable": [
+										{
+											"key": "key"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "\"<object>\""
+						},
+						{
+							"name": "Unexpected error",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/host/:key",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"host",
+										":key"
+									],
+									"variable": [
+										{
+											"key": "key"
+										}
+									]
+								}
+							},
+							"status": "Internal Server Error",
+							"code": 500,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n \"code\": \"<string>\",\n \"message\": \"<string>\"\n}"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "req",
+			"item": [
+				{
+					"name": "headers",
+					"item": [
+						{
+							"name": "get Request Headers",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"tests[\"Successful HTTP request\"] = responseCode.code === 200;",
+											"tests[\"Status code name has string\"] = responseCode.name.has(\"OK\");",
+											"",
+											"var data = JSON.parse(responseBody);",
+											"tests[\"It has 'Accept' header\"] = data.Accept[0] == '*/*';",
+											"tests[\"It has 'Connection' header\"] = data.Connection.length > 0;",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/req/headers",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"req",
+										"headers"
+									]
+								},
+								"description": "returns HTTP request headers\n"
+							},
+							"response": [
+								{
+									"name": "OK",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/req/headers",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"req",
+												"headers"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "\"<object>\""
+								},
+								{
+									"name": "Unexpected error",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/req/headers",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"req",
+												"headers"
+											]
+										}
+									},
+									"status": "Internal Server Error",
+									"code": 500,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n \"code\": \"<string>\",\n \"message\": \"<string>\"\n}"
+								}
+							]
+						},
+						{
+							"name": "get Request Header",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"tests[\"Successful HTTP request\"] = responseCode.code === 200;",
+											"tests[\"Status code name has string\"] = responseCode.name.has(\"OK\");",
+											"",
+											"var data = JSON.parse(responseBody);",
+											"tests[\"User-Agent should have 'Postman'\"] = data[0].indexOf('Postman') > -1;",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/req/headers/:header",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"req",
+										"headers",
+										":header"
+									],
+									"variable": [
+										{
+											"key": "header",
+											"value": "User-Agent",
+											"description": "Specify a HTTP header"
+										}
+									]
+								},
+								"description": "returns a specified HTTP request header\n"
+							},
+							"response": [
+								{
+									"name": "Unexpected error",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/req/headers/:header",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"req",
+												"headers",
+												":header"
+											],
+											"variable": [
+												{
+													"key": "header"
+												}
+											]
+										}
+									},
+									"status": "Internal Server Error",
+									"code": 500,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n \"code\": \"<string>\",\n \"message\": \"<string>\"\n}"
+								},
+								{
+									"name": "OK",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/req/headers/:header",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"req",
+												"headers",
+												":header"
+											],
+											"variable": [
+												{
+													"key": "header"
+												}
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "[\n \"<string>\",\n \"<string>\"\n]"
+								}
+							]
+						}
+					]
+				},
+				{
+					"name": "get Request Info",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"tests[\"Successful HTTP request\"] = responseCode.code === 200;",
+									"tests[\"Status code name has string\"] = responseCode.name.has(\"OK\");",
+									"",
+									"var data = JSON.parse(responseBody);",
+									"tests[\"Headers have 'Accept-Encoding' header\"] = data.headers[\"Accept-Encoding\"].length > 0;",
+									"tests[\"HTTP method should be 'GET'\"] = data.method == 'GET';",
+									"tests[\"HTTP protocol should be 'HTTP'\"] = data.protocol.indexOf('HTTP') > -1;",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/req",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"req"
+							]
+						},
+						"description": "returns HTTP request information\n"
+					},
+					"response": [
+						{
+							"name": "OK",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/req",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"req"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n \"protocol\": \"<string>\",\n \"method\": \"<string>\",\n \"host\": \"<string>\",\n \"remote_addr\": \"<string>\",\n \"uri\": \"<string>\",\n \"headers\": \"<object>\",\n \"form\": \"<object>\",\n \"post_form\": \"<object>\"\n}"
+						},
+						{
+							"name": "Unexpected error",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/req",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"req"
+									]
+								}
+							},
+							"status": "Internal Server Error",
+							"code": 500,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n \"code\": \"<string>\",\n \"message\": \"<string>\"\n}"
+						}
+					]
+				},
+				{
+					"name": "get Request Field",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"tests[\"Successful HTTP request\"] = responseCode.code === 200;",
+									"tests[\"Status code name has string\"] = responseCode.name.has(\"OK\");",
+									"",
+									"tests[\"Result should have '/req'\"] = responseBody.indexOf('/req') > -1;",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/req/:key",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"req",
+								":key"
+							],
+							"variable": [
+								{
+									"key": "key",
+									"value": "uri",
+									"description": "Specify a HTTP request field"
+								}
+							]
+						},
+						"description": "returns HTTP request specified information\n"
+					},
+					"response": [
+						{
+							"name": "Unexpected error",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/req/:key",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"req",
+										":key"
+									],
+									"variable": [
+										{
+											"key": "key"
+										}
+									]
+								}
+							},
+							"status": "Internal Server Error",
+							"code": 500,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n \"code\": \"<string>\",\n \"message\": \"<string>\"\n}"
+						},
+						{
+							"name": "OK",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/req/:key",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"req",
+										":key"
+									],
+									"variable": [
+										{
+											"key": "key"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "\"<string>\""
+						}
+					]
+				},
+				{
+					"name": "get Request Form",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"tests[\"Successful HTTP request\"] = responseCode.code === 200;",
+									"tests[\"Status code name has string\"] = responseCode.name.has(\"OK\");",
+									"",
+									"var data = JSON.parse(responseBody);",
+									"tests[\"Response is an empty object\"] = Object.keys(data).length === 0 && data.constructor === Object;",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/req/form",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"req",
+								"form"
+							]
+						},
+						"description": "returns HTTP GET query parameters and the POST / PUT form data\n"
+					},
+					"response": [
+						{
+							"name": "Unexpected error",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/req/form",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"req",
+										"form"
+									]
+								}
+							},
+							"status": "Internal Server Error",
+							"code": 500,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n \"code\": \"<string>\",\n \"message\": \"<string>\"\n}"
+						},
+						{
+							"name": "OK",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/req/form",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"req",
+										"form"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "\"<object>\""
+						}
+					]
+				},
+				{
+					"name": "get Request Post Form",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"tests[\"Successful HTTP request\"] = responseCode.code === 200;",
+									"tests[\"Status code name has string\"] = responseCode.name.has(\"OK\");",
+									"",
+									"var data = JSON.parse(responseBody);",
+									"tests[\"Response is an empty object\"] = Object.keys(data).length === 0 && data.constructor === Object;",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/req/post_form",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"req",
+								"post_form"
+							]
+						},
+						"description": "returns form data including only HTTP POST, PATCH or PUT body parameters\n"
+					},
+					"response": [
+						{
+							"name": "Unexpected error",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/req/post_form",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"req",
+										"post_form"
+									]
+								}
+							},
+							"status": "Internal Server Error",
+							"code": 500,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n \"code\": \"<string>\",\n \"message\": \"<string>\"\n}"
+						},
+						{
+							"name": "OK",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/req/post_form",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"req",
+										"post_form"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "\"<object>\""
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "aws",
+			"item": [
+				{
+					"name": "ec2",
+					"item": [
+						{
+							"name": "get Amazon EC2",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"tests[\"HTTP status code is 404\"] = responseCode.code === 404;",
+											"tests[\"Status code name is 'Not Found'\"] = responseCode.name.has(\"Not Found\");",
+											"",
+											"var data = JSON.parse(responseBody);",
+											"tests[\"Responsed error code was 404\"] = data.code == '404';",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/aws/ec2",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"aws",
+										"ec2"
+									]
+								},
+								"description": "returns information about Amazon EC2 container instance\n"
+							},
+							"response": [
+								{
+									"name": "Unexpected error",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/aws/ec2",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"aws",
+												"ec2"
+											]
+										}
+									},
+									"status": "Internal Server Error",
+									"code": 500,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n \"code\": \"<string>\",\n \"message\": \"<string>\"\n}"
+								},
+								{
+									"name": "OK",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/aws/ec2",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"aws",
+												"ec2"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n \"instance_id\": \"<string>\",\n \"instance_type\": \"<string>\",\n \"ami_id\": \"<string>\",\n \"availability_zone\": \"<string>\",\n \"instance_profile\": \"<string>\",\n \"public_hostname\": \"<string>\",\n \"public_ipv4\": \"<string>\",\n \"local_hostname\": \"<string>\",\n \"local_ipv4\": \"<string>\",\n \"security_groups\": [\n  \"<string>\",\n  \"<string>\"\n ]\n}"
+								}
+							]
+						},
+						{
+							"name": "get Amazon EC2Field",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"tests[\"HTTP status code is 404\"] = responseCode.code === 422;",
+											"tests[\"Status code name is 'Not Found'\"] = responseCode.name.has(\"Unprocessable Entity\");",
+											"",
+											"var data = JSON.parse(responseBody);",
+											"tests[\"Responsed error code was 606\"] = data.code == '606';",
+											"tests[\"Key should be one of allowed values\"] = data.message.indexOf('public_ipv4') > -1;",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/aws/ec2/:key",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"aws",
+										"ec2",
+										":key"
+									],
+									"variable": [
+										{
+											"key": "key",
+											"value": "non-proper-key",
+											"description": "Specify an EC2 field"
+										}
+									]
+								},
+								"description": "returns specified information about Amazon EC2 container instance\n"
+							},
+							"response": [
+								{
+									"name": "OK",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/aws/ec2/:key",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"aws",
+												"ec2",
+												":key"
+											],
+											"variable": [
+												{
+													"key": "key"
+												}
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "\"<string>\""
+								},
+								{
+									"name": "Unexpected error",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/aws/ec2/:key",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"aws",
+												"ec2",
+												":key"
+											],
+											"variable": [
+												{
+													"key": "key"
+												}
+											]
+										}
+									},
+									"status": "Internal Server Error",
+									"code": 500,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n \"code\": \"<string>\",\n \"message\": \"<string>\"\n}"
+								}
+							]
+						}
+					]
+				},
+				{
+					"name": "ecs",
+					"item": [
+						{
+							"name": "get Amazon ECS",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"tests[\"HTTP status code is 404\"] = responseCode.code === 404;",
+											"tests[\"Status code name is 'Not Found'\"] = responseCode.name.has(\"Not Found\");",
+											"",
+											"var data = JSON.parse(responseBody);",
+											"tests[\"Responsed error code was 404\"] = data.code == '404';",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/aws/ecs",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"aws",
+										"ecs"
+									]
+								},
+								"description": "returns information about Amazon ECS container\n"
+							},
+							"response": [
+								{
+									"name": "OK",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/aws/ecs",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"aws",
+												"ecs"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n \"cluster\": \"<string>\",\n \"task_arn\": \"<string>\",\n \"container_instance_arn\": \"<string>\",\n \"family\": \"<string>\",\n \"revision\": \"<string>\",\n \"desired\": \"<string>\",\n \"known\": \"<string>\",\n \"containers\": [\n  {\n   \"name\": \"<string>\",\n   \"image_name\": \"<string>\",\n   \"id\": \"<string>\",\n   \"type\": \"<string>\",\n   \"docker_name\": \"<string>\",\n   \"image_id\": \"<string>\",\n   \"port_mappings\": [\n    {\n     \"container_port\": {\n      \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n     },\n     \"host_port\": {\n      \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n     },\n     \"protocol\": {\n      \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n     },\n     \"bind_ip\": {\n      \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n     }\n    },\n    {\n     \"container_port\": {\n      \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n     },\n     \"host_port\": {\n      \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n     },\n     \"protocol\": {\n      \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n     },\n     \"bind_ip\": {\n      \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n     }\n    }\n   ],\n   \"networks\": [\n    {\n     \"network_mode\": {\n      \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n     },\n     \"ipv4_addresses\": {\n      \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n     },\n     \"ipv6_addresses\": {\n      \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n     }\n    },\n    {\n     \"network_mode\": {\n      \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n     },\n     \"ipv4_addresses\": {\n      \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n     },\n     \"ipv6_addresses\": {\n      \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n     }\n    }\n   ],\n   \"desired\": \"<string>\",\n   \"known\": \"<string>\",\n   \"cpu\": \"<string>\",\n   \"memory\": \"<string>\",\n   \"created_at\": \"<string>\",\n   \"started_at\": \"<string>\"\n  },\n  {\n   \"name\": \"<string>\",\n   \"image_name\": \"<string>\",\n   \"id\": \"<string>\",\n   \"type\": \"<string>\",\n   \"docker_name\": \"<string>\",\n   \"image_id\": \"<string>\",\n   \"port_mappings\": [\n    {\n     \"container_port\": {\n      \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n     },\n     \"host_port\": {\n      \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n     },\n     \"protocol\": {\n      \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n     },\n     \"bind_ip\": {\n      \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n     }\n    },\n    {\n     \"container_port\": {\n      \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n     },\n     \"host_port\": {\n      \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n     },\n     \"protocol\": {\n      \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n     },\n     \"bind_ip\": {\n      \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n     }\n    }\n   ],\n   \"networks\": [\n    {\n     \"network_mode\": {\n      \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n     },\n     \"ipv4_addresses\": {\n      \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n     },\n     \"ipv6_addresses\": {\n      \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n     }\n    },\n    {\n     \"network_mode\": {\n      \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n     },\n     \"ipv4_addresses\": {\n      \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n     },\n     \"ipv6_addresses\": {\n      \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n     }\n    }\n   ],\n   \"desired\": \"<string>\",\n   \"known\": \"<string>\",\n   \"cpu\": \"<string>\",\n   \"memory\": \"<string>\",\n   \"created_at\": \"<string>\",\n   \"started_at\": \"<string>\"\n  }\n ],\n \"availability_zone\": \"<string>\",\n \"cpu\": \"<string>\",\n \"memory\": \"<string>\",\n \"pull_started_at\": \"<string>\"\n}"
+								},
+								{
+									"name": "Unexpected error",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/aws/ecs",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"aws",
+												"ecs"
+											]
+										}
+									},
+									"status": "Internal Server Error",
+									"code": 500,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n \"code\": \"<string>\",\n \"message\": \"<string>\"\n}"
+								}
+							]
+						},
+						{
+							"name": "get Amazon ECS Field",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"tests[\"HTTP status code is 404\"] = responseCode.code === 422;",
+											"tests[\"Status code name is 'Not Found'\"] = responseCode.name.has(\"Unprocessable Entity\");",
+											"",
+											"var data = JSON.parse(responseBody);",
+											"tests[\"Responsed error code was 606\"] = data.code == '606';",
+											"tests[\"Key should be one of allowed values\"] = data.message.indexOf('task_arn') > -1;",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/aws/ecs/:key",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"aws",
+										"ecs",
+										":key"
+									],
+									"variable": [
+										{
+											"key": "key",
+											"value": "non-proper-key",
+											"description": "Specify an ECS field"
+										}
+									]
+								},
+								"description": "returns specified information about Amazon ECS container\n"
+							},
+							"response": [
+								{
+									"name": "Unexpected error",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/aws/ecs/:key",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"aws",
+												"ecs",
+												":key"
+											],
+											"variable": [
+												{
+													"key": "key"
+												}
+											]
+										}
+									},
+									"status": "Internal Server Error",
+									"code": 500,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n \"code\": \"<string>\",\n \"message\": \"<string>\"\n}"
+								},
+								{
+									"name": "OK",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/aws/ecs/:key",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"aws",
+												"ecs",
+												":key"
+											],
+											"variable": [
+												{
+													"key": "key"
+												}
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "\"<string>\""
+								}
+							]
+						}
+					]
+				},
+				{
+					"name": "get AWS",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"tests[\"HTTP status code is 404\"] = responseCode.code === 404;",
+									"tests[\"Status code name is 'Not Found'\"] = responseCode.name.has(\"Not Found\");",
+									"",
+									"var data = JSON.parse(responseBody);",
+									"tests[\"Responsed error code was 404\"] = data.code == '404';",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/aws",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"aws"
+							]
+						},
+						"description": "returns information about Amazon Web Services\n"
+					},
+					"response": [
+						{
+							"name": "Unexpected error",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/aws",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"aws"
+									]
+								}
+							},
+							"status": "Internal Server Error",
+							"code": 500,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n \"code\": \"<string>\",\n \"message\": \"<string>\"\n}"
+						},
+						{
+							"name": "OK",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/aws",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"aws"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n \"ec2\": {\n  \"instance_id\": \"<string>\",\n  \"instance_type\": \"<string>\",\n  \"ami_id\": \"<string>\",\n  \"availability_zone\": \"<string>\",\n  \"instance_profile\": \"<string>\",\n  \"public_hostname\": \"<string>\",\n  \"public_ipv4\": \"<string>\",\n  \"local_hostname\": \"<string>\",\n  \"local_ipv4\": \"<string>\",\n  \"security_groups\": [\n   \"<string>\",\n   \"<string>\"\n  ]\n },\n \"ecs\": {\n  \"cluster\": \"<string>\",\n  \"task_arn\": \"<string>\",\n  \"container_instance_arn\": \"<string>\",\n  \"family\": \"<string>\",\n  \"revision\": \"<string>\",\n  \"desired\": \"<string>\",\n  \"known\": \"<string>\",\n  \"containers\": [\n   {\n    \"name\": \"<string>\",\n    \"image_name\": \"<string>\",\n    \"id\": \"<string>\",\n    \"type\": \"<string>\",\n    \"docker_name\": \"<string>\",\n    \"image_id\": \"<string>\",\n    \"port_mappings\": [\n     {\n      \"container_port\": {\n       \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n      },\n      \"host_port\": {\n       \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n      },\n      \"protocol\": {\n       \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n      },\n      \"bind_ip\": {\n       \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n      }\n     },\n     {\n      \"container_port\": {\n       \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n      },\n      \"host_port\": {\n       \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n      },\n      \"protocol\": {\n       \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n      },\n      \"bind_ip\": {\n       \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n      }\n     }\n    ],\n    \"networks\": [\n     {\n      \"network_mode\": {\n       \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n      },\n      \"ipv4_addresses\": {\n       \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n      },\n      \"ipv6_addresses\": {\n       \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n      }\n     },\n     {\n      \"network_mode\": {\n       \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n      },\n      \"ipv4_addresses\": {\n       \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n      },\n      \"ipv6_addresses\": {\n       \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n      }\n     }\n    ],\n    \"desired\": \"<string>\",\n    \"known\": \"<string>\",\n    \"cpu\": \"<string>\",\n    \"memory\": \"<string>\",\n    \"created_at\": \"<string>\",\n    \"started_at\": \"<string>\"\n   },\n   {\n    \"name\": \"<string>\",\n    \"image_name\": \"<string>\",\n    \"id\": \"<string>\",\n    \"type\": \"<string>\",\n    \"docker_name\": \"<string>\",\n    \"image_id\": \"<string>\",\n    \"port_mappings\": [\n     {\n      \"container_port\": {\n       \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n      },\n      \"host_port\": {\n       \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n      },\n      \"protocol\": {\n       \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n      },\n      \"bind_ip\": {\n       \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n      }\n     },\n     {\n      \"container_port\": {\n       \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n      },\n      \"host_port\": {\n       \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n      },\n      \"protocol\": {\n       \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n      },\n      \"bind_ip\": {\n       \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n      }\n     }\n    ],\n    \"networks\": [\n     {\n      \"network_mode\": {\n       \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n      },\n      \"ipv4_addresses\": {\n       \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n      },\n      \"ipv6_addresses\": {\n       \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n      }\n     },\n     {\n      \"network_mode\": {\n       \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n      },\n      \"ipv4_addresses\": {\n       \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n      },\n      \"ipv6_addresses\": {\n       \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n      }\n     }\n    ],\n    \"desired\": \"<string>\",\n    \"known\": \"<string>\",\n    \"cpu\": \"<string>\",\n    \"memory\": \"<string>\",\n    \"created_at\": \"<string>\",\n    \"started_at\": \"<string>\"\n   }\n  ],\n  \"availability_zone\": \"<string>\",\n  \"cpu\": \"<string>\",\n  \"memory\": \"<string>\",\n  \"pull_started_at\": \"<string>\"\n }\n}"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "googlecloud",
+			"item": [
+				{
+					"name": "gce",
+					"item": [
+						{
+							"name": "get Google Compute Engine",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"tests[\"HTTP status code is 404\"] = responseCode.code === 404;",
+											"tests[\"Status code name is 'Not Found'\"] = responseCode.name.has(\"Not Found\");",
+											"",
+											"var data = JSON.parse(responseBody);",
+											"tests[\"Responsed error code was 404\"] = data.code == '404';",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/googlecloud/gce",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"googlecloud",
+										"gce"
+									]
+								},
+								"description": "returns information about Google Compute Engine instance\n"
+							},
+							"response": [
+								{
+									"name": "OK",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/googlecloud/gce",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"googlecloud",
+												"gce"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n \"project_id\": \"<string>\",\n \"instance_id\": \"<string>\",\n \"numeric_project_id\": \"<string>\",\n \"enable_os_login\": \"<string>\",\n \"instance_hostname\": \"<string>\",\n \"instance_name\": \"<string>\",\n \"machine_type\": \"<string>\",\n \"cpu_platform\": \"<string>\",\n \"service_accounts\": [\n  {\n   \"email\": \"<string>\",\n   \"scopes\": [\n    \"<string>\",\n    \"<string>\"\n   ]\n  },\n  {\n   \"email\": \"<string>\",\n   \"scopes\": [\n    \"<string>\",\n    \"<string>\"\n   ]\n  }\n ],\n \"tags\": [\n  \"<string>\",\n  \"<string>\"\n ],\n \"zone\": \"<string>\"\n}"
+								},
+								{
+									"name": "Unexpected error",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/googlecloud/gce",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"googlecloud",
+												"gce"
+											]
+										}
+									},
+									"status": "Internal Server Error",
+									"code": 500,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n \"code\": \"<string>\",\n \"message\": \"<string>\"\n}"
+								}
+							]
+						},
+						{
+							"name": "get Google Compute Engine Field",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"tests[\"HTTP status code is 404\"] = responseCode.code === 422;",
+											"tests[\"Status code name is 'Not Found'\"] = responseCode.name.has(\"Unprocessable Entity\");",
+											"",
+											"var data = JSON.parse(responseBody);",
+											"tests[\"Responsed error code was 606\"] = data.code == '606';",
+											"tests[\"Key should be one of allowed values\"] = data.message.indexOf('service_accounts') > -1;",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/googlecloud/gce/:key",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"googlecloud",
+										"gce",
+										":key"
+									],
+									"variable": [
+										{
+											"key": "key",
+											"value": "non-proper-key",
+											"description": "Specify a GCE field"
+										}
+									]
+								},
+								"description": "returns specified information about Google Compute Engine instance\n"
+							},
+							"response": [
+								{
+									"name": "Unexpected error",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/googlecloud/gce/:key",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"googlecloud",
+												"gce",
+												":key"
+											],
+											"variable": [
+												{
+													"key": "key"
+												}
+											]
+										}
+									},
+									"status": "Internal Server Error",
+									"code": 500,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n \"code\": \"<string>\",\n \"message\": \"<string>\"\n}"
+								},
+								{
+									"name": "OK",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/googlecloud/gce/:key",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"googlecloud",
+												"gce",
+												":key"
+											],
+											"variable": [
+												{
+													"key": "key"
+												}
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "\"<string>\""
+								}
+							]
+						}
+					]
+				},
+				{
+					"name": "gke",
+					"item": [
+						{
+							"name": "get Google Kubernetes Engine",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"tests[\"HTTP status code is 404\"] = responseCode.code === 404;",
+											"tests[\"Status code name is 'Not Found'\"] = responseCode.name.has(\"Not Found\");",
+											"",
+											"var data = JSON.parse(responseBody);",
+											"tests[\"Responsed error code was 404\"] = data.code == '404';",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/googlecloud/gke",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"googlecloud",
+										"gke"
+									]
+								},
+								"description": "returns information about Google Kubernetes Engine instance\n"
+							},
+							"response": [
+								{
+									"name": "Unexpected error",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/googlecloud/gke",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"googlecloud",
+												"gke"
+											]
+										}
+									},
+									"status": "Internal Server Error",
+									"code": 500,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n \"code\": \"<string>\",\n \"message\": \"<string>\"\n}"
+								},
+								{
+									"name": "OK",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/googlecloud/gke",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"googlecloud",
+												"gke"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n \"cluster_uid\": \"<string>\",\n \"cluster_name\": \"<string>\",\n \"cluster_location\": \"<string>\"\n}"
+								}
+							]
+						},
+						{
+							"name": "get Google Kubernetes Engine Field",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"tests[\"HTTP status code is 404\"] = responseCode.code === 422;",
+											"tests[\"Status code name is 'Not Found'\"] = responseCode.name.has(\"Unprocessable Entity\");",
+											"",
+											"var data = JSON.parse(responseBody);",
+											"tests[\"Responsed error code was 606\"] = data.code == '606';",
+											"tests[\"Key should be one of allowed values\"] = data.message.indexOf('cluster_location') > -1;",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/googlecloud/gke/:key",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"googlecloud",
+										"gke",
+										":key"
+									],
+									"variable": [
+										{
+											"key": "key",
+											"value": "non-proper-key",
+											"description": "Specify a GKE field"
+										}
+									]
+								},
+								"description": "returns specified information about Google Kubernetes Engine instance\n"
+							},
+							"response": [
+								{
+									"name": "Unexpected error",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/googlecloud/gke/:key",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"googlecloud",
+												"gke",
+												":key"
+											],
+											"variable": [
+												{
+													"key": "key"
+												}
+											]
+										}
+									},
+									"status": "Internal Server Error",
+									"code": 500,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n \"code\": \"<string>\",\n \"message\": \"<string>\"\n}"
+								},
+								{
+									"name": "OK",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/googlecloud/gke/:key",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"googlecloud",
+												"gke",
+												":key"
+											],
+											"variable": [
+												{
+													"key": "key"
+												}
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "\"<string>\""
+								}
+							]
+						}
+					]
+				},
+				{
+					"name": "get Google Cloud",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"tests[\"HTTP status code is 404\"] = responseCode.code === 404;",
+									"tests[\"Status code name is 'Not Found'\"] = responseCode.name.has(\"Not Found\");",
+									"",
+									"var data = JSON.parse(responseBody);",
+									"tests[\"Responsed error code was 404\"] = data.code == '404';",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/googlecloud",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"googlecloud"
+							]
+						},
+						"description": "returns information about Google Cloud\n"
+					},
+					"response": [
+						{
+							"name": "Unexpected error",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/googlecloud",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"googlecloud"
+									]
+								}
+							},
+							"status": "Internal Server Error",
+							"code": 500,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n \"code\": \"<string>\",\n \"message\": \"<string>\"\n}"
+						},
+						{
+							"name": "OK",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/googlecloud",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"googlecloud"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n \"gce\": {\n  \"project_id\": \"<string>\",\n  \"instance_id\": \"<string>\",\n  \"numeric_project_id\": \"<string>\",\n  \"enable_os_login\": \"<string>\",\n  \"instance_hostname\": \"<string>\",\n  \"instance_name\": \"<string>\",\n  \"machine_type\": \"<string>\",\n  \"cpu_platform\": \"<string>\",\n  \"service_accounts\": [\n   {\n    \"email\": \"<string>\",\n    \"scopes\": [\n     \"<string>\",\n     \"<string>\"\n    ]\n   },\n   {\n    \"email\": \"<string>\",\n    \"scopes\": [\n     \"<string>\",\n     \"<string>\"\n    ]\n   }\n  ],\n  \"tags\": [\n   \"<string>\",\n   \"<string>\"\n  ],\n  \"zone\": \"<string>\"\n },\n \"gke\": {\n  \"cluster_uid\": \"<string>\",\n  \"cluster_name\": \"<string>\",\n  \"cluster_location\": \"<string>\"\n }\n}"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "get Everything",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"tests[\"Successful HTTP request\"] = responseCode.code === 200;",
+							"tests[\"Status code name has string\"] = responseCode.name.has(\"OK\");",
+							"",
+							"var data = JSON.parse(responseBody);",
+							"tests[\"Arguments have 5 elements\"] = data.app.args.length == 5;",
+							"tests[\"Hostname exists\"] = data.host.name.length > 0;",
+							"tests[\"Requested method is GET\"] = data.req.method == \"GET\";",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						""
+					]
+				},
+				"description": "returns everything\n"
+			},
+			"response": [
+				{
+					"name": "OK",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								""
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						}
+					],
+					"cookie": [],
+					"body": "{\n \"app\": {\n  \"args\": [\n   \"<string>\",\n   \"<string>\"\n  ],\n  \"envs\": [\n   \"<string>\",\n   \"<string>\"\n  ],\n  \"grp\": \"<long>\",\n  \"user\": \"<long>\",\n  \"workdir\": \"<string>\"\n },\n \"host\": {\n  \"name\": \"<string>\",\n  \"hosts\": [\n   \"<string>\",\n   \"<string>\"\n  ],\n  \"resolv_conf\": [\n   \"<string>\",\n   \"<string>\"\n  ]\n },\n \"req\": {\n  \"protocol\": \"<string>\",\n  \"method\": \"<string>\",\n  \"host\": \"<string>\",\n  \"remote_addr\": \"<string>\",\n  \"uri\": \"<string>\",\n  \"headers\": \"<object>\",\n  \"form\": \"<object>\",\n  \"post_form\": \"<object>\"\n },\n \"aws\": {\n  \"ec2\": {\n   \"instance_id\": \"<string>\",\n   \"instance_type\": \"<string>\",\n   \"ami_id\": \"<string>\",\n   \"availability_zone\": \"<string>\",\n   \"instance_profile\": \"<string>\",\n   \"public_hostname\": \"<string>\",\n   \"public_ipv4\": \"<string>\",\n   \"local_hostname\": \"<string>\",\n   \"local_ipv4\": \"<string>\",\n   \"security_groups\": [\n    \"<string>\",\n    \"<string>\"\n   ]\n  },\n  \"ecs\": {\n   \"cluster\": \"<string>\",\n   \"task_arn\": \"<string>\",\n   \"container_instance_arn\": \"<string>\",\n   \"family\": \"<string>\",\n   \"revision\": \"<string>\",\n   \"desired\": \"<string>\",\n   \"known\": \"<string>\",\n   \"containers\": [\n    {\n     \"name\": \"<string>\",\n     \"image_name\": \"<string>\",\n     \"id\": \"<string>\",\n     \"type\": \"<string>\",\n     \"docker_name\": \"<string>\",\n     \"image_id\": \"<string>\",\n     \"port_mappings\": [\n      {\n       \"container_port\": {\n        \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n       },\n       \"host_port\": {\n        \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n       },\n       \"protocol\": {\n        \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n       },\n       \"bind_ip\": {\n        \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n       }\n      },\n      {\n       \"container_port\": {\n        \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n       },\n       \"host_port\": {\n        \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n       },\n       \"protocol\": {\n        \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n       },\n       \"bind_ip\": {\n        \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n       }\n      }\n     ],\n     \"networks\": [\n      {\n       \"network_mode\": {\n        \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n       },\n       \"ipv4_addresses\": {\n        \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n       },\n       \"ipv6_addresses\": {\n        \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n       }\n      },\n      {\n       \"network_mode\": {\n        \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n       },\n       \"ipv4_addresses\": {\n        \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n       },\n       \"ipv6_addresses\": {\n        \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n       }\n      }\n     ],\n     \"desired\": \"<string>\",\n     \"known\": \"<string>\",\n     \"cpu\": \"<string>\",\n     \"memory\": \"<string>\",\n     \"created_at\": \"<string>\",\n     \"started_at\": \"<string>\"\n    },\n    {\n     \"name\": \"<string>\",\n     \"image_name\": \"<string>\",\n     \"id\": \"<string>\",\n     \"type\": \"<string>\",\n     \"docker_name\": \"<string>\",\n     \"image_id\": \"<string>\",\n     \"port_mappings\": [\n      {\n       \"container_port\": {\n        \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n       },\n       \"host_port\": {\n        \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n       },\n       \"protocol\": {\n        \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n       },\n       \"bind_ip\": {\n        \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n       }\n      },\n      {\n       \"container_port\": {\n        \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n       },\n       \"host_port\": {\n        \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n       },\n       \"protocol\": {\n        \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n       },\n       \"bind_ip\": {\n        \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n       }\n      }\n     ],\n     \"networks\": [\n      {\n       \"network_mode\": {\n        \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n       },\n       \"ipv4_addresses\": {\n        \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n       },\n       \"ipv6_addresses\": {\n        \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n       }\n      },\n      {\n       \"network_mode\": {\n        \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n       },\n       \"ipv4_addresses\": {\n        \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n       },\n       \"ipv6_addresses\": {\n        \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n       }\n      }\n     ],\n     \"desired\": \"<string>\",\n     \"known\": \"<string>\",\n     \"cpu\": \"<string>\",\n     \"memory\": \"<string>\",\n     \"created_at\": \"<string>\",\n     \"started_at\": \"<string>\"\n    }\n   ],\n   \"availability_zone\": \"<string>\",\n   \"cpu\": \"<string>\",\n   \"memory\": \"<string>\",\n   \"pull_started_at\": \"<string>\"\n  }\n },\n \"googlecloud\": {\n  \"gce\": {\n   \"project_id\": \"<string>\",\n   \"instance_id\": \"<string>\",\n   \"numeric_project_id\": \"<string>\",\n   \"enable_os_login\": \"<string>\",\n   \"instance_hostname\": \"<string>\",\n   \"instance_name\": \"<string>\",\n   \"machine_type\": \"<string>\",\n   \"cpu_platform\": \"<string>\",\n   \"service_accounts\": [\n    {\n     \"email\": \"<string>\",\n     \"scopes\": [\n      \"<string>\",\n      \"<string>\"\n     ]\n    },\n    {\n     \"email\": \"<string>\",\n     \"scopes\": [\n      \"<string>\",\n      \"<string>\"\n     ]\n    }\n   ],\n   \"tags\": [\n    \"<string>\",\n    \"<string>\"\n   ],\n   \"zone\": \"<string>\"\n  },\n  \"gke\": {\n   \"cluster_uid\": \"<string>\",\n   \"cluster_name\": \"<string>\",\n   \"cluster_location\": \"<string>\"\n  }\n }\n}"
+				},
+				{
+					"name": "Unexpected error",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								""
+							]
+						}
+					},
+					"status": "Internal Server Error",
+					"code": 500,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						}
+					],
+					"cookie": [],
+					"body": "{\n \"code\": \"<string>\",\n \"message\": \"<string>\"\n}"
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost",
+			"type": "string"
+		}
+	]
+}

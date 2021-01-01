@@ -1,5 +1,7 @@
 # Retrieving server context - A REST API server
 
+[![GitHub Actions](https://github.com/pottava/http-return-everything/workflows/Publish%20artifacts/badge.svg?branch=master)](https://github.com/pottava/http-return-everything/actions)
+
 [gcr.io/pottava/re](https://gcr.io/pottava/re/)
 
 Supported tags and respective `Dockerfile` links:  

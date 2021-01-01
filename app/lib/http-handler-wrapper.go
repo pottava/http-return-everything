@@ -54,6 +54,13 @@ func Wrap(handler http.Handler) http.Handler {
 					}
 				}
 			}
+			if Config.CORSOrigin != "" {
+				w.Header().Set("Access-Control-Allow-Origin", Config.CORSOrigin)
+				w.Header().Set("Access-Control-Allow-Methods", "GET,POST,DELETE,PUT,PATCH,HEAD")
+				w.Header().Set("Access-Control-Allow-Headers", "Origin,Content-Type,Authorization")
+				w.Header().Set("Access-Control-Expose-Headers", "Content-Type,Authorization,Date")
+				w.Header().Set("Access-Control-Max-Age", "86400")
+			}
 			writer := overrideWriter(w, ioWriter)
 			handler.ServeHTTP(writer, r)
 

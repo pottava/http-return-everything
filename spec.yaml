@@ -10,7 +10,7 @@ produces:
   - application/json
 schemes:
   - http
-host: localhost
+host: localhost:8080
 paths:
   /:
     get:

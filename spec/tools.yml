@@ -1,0 +1,17 @@
+version: "2.4"
+
+services:
+  # docker-compose -f spec/tools.yml run --rm test
+  test:
+    image: postman/newman:5.2-alpine
+    command: ["run", "/app/collection.json", "--environment", "/app/envs/local-internal.json"]
+    volumes:
+      - .:/app
+    networks:
+      - apps
+    container_name: test
+
+networks:
+  apps:
+    external:
+      name: dev_default

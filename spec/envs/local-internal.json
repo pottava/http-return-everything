@@ -1,0 +1,14 @@
+{
+	"id": "e4598a1a-4421-46d7-b47a-a442b6f36a83",
+	"name": "local",
+	"values": [
+		{
+			"key": "baseUrl",
+			"value": "http://api:8080",
+			"enabled": true
+		}
+	],
+	"_postman_variable_scope": "environment",
+	"_postman_exported_at": "2021-01-01T02:47:32.929Z",
+	"_postman_exported_using": "Postman/7.36.1"
+}
