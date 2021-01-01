@@ -5,7 +5,6 @@
 [gcr.io/pottava/re](https://gcr.io/pottava/re/)
 
 Supported tags and respective `Dockerfile` links:  
-・latest ([prod/2.0/Dockerfile](https://github.com/pottava/http-return-everything/blob/master/prod/2.0/Dockerfile))  
 ・v2.0 ([prod/2.0/Dockerfile](https://github.com/pottava/http-return-everything/blob/master/prod/2.0/Dockerfile))  
 ・v1.3 ([prod/1.3/Dockerfile](https://github.com/pottava/http-return-everything/blob/master/prod/1.3/Dockerfile))  
 
@@ -21,17 +20,18 @@ ENABLE_GCP                | Enable the Google Cloud metadata endpoint. (default:
 ACCESS_LOG                | Send access logs to /dev/stdout. (default: true) | 
 ACCESS_DETAIL_LOG         | Save HTTP request details (default: false) | 
 CONTENT_ENCODING          | Compress response data if the request allows. (default: true) |
+CORS_ORIGIN               | Allowed CORS origin (default: *) |
 
 ### 2. Run the application
 
-`$ docker run -d -p 80:8080 gcr.io/pottava/re:v2.0`
+`$ docker run -d --rm -p 80:8080 gcr.io/pottava/re:v2.0`
 
 * with Google [Cloud Run](https://cloud.google.com/run):  
 
 ```bash
 $ gcloud run deploy re --allow-unauthenticated \
     --image gcr.io/pottava/re:v2.0 \
-    --set-env-vars ENABLE_AWS=0
+    --set-env-vars ENABLE_GCP=1,ENABLE_AWS=0
 ```
 
 * with docker-compose.yml:  
