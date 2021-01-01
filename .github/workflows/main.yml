@@ -36,6 +36,11 @@ jobs:
       run: docker-compose -f dev/tools.yml run --rm lint
     - name: Run unit tests
       run: docker-compose -f dev/tools.yml run --rm test
+    - name: Run API tests
+      run: |
+        docker-compose -f dev/runtime.yml up -d
+        sleep 15
+        docker-compose -f spec/tools.yml run --rm test
 
   release-artifacts:
     name: Save artifacts
