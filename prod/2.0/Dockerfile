@@ -24,4 +24,5 @@ FROM alpine:3.12
 RUN apk --no-cache add tini ca-certificates
 COPY --from=builder /app /app
 ENV HOST=0.0.0.0 PORT=8080
+USER nobody
 ENTRYPOINT ["tini", "--", "/app"]

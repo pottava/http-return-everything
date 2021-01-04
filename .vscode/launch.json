@@ -1,0 +1,39 @@
+{
+  "configurations": [
+    {
+      "name": "Cloud Run: Run/Debug Locally",
+      "type": "cloudcode.cloudrun",
+      "request": "launch",
+      "build": {
+        "buildpacks": {
+          "path": "app/go.mod",
+          "builder": "gcr.io/buildpacks/builder:v1"
+        }
+      },
+      "image": "http-return-everything",
+      "service": {
+        "name": "http-re",
+        "containerPort": 8080,
+        "env": [
+          {
+            "name": "ENABLE_AWS",
+            "value": "false"
+          },
+          {
+            "name": "ENABLE_GCP",
+            "value": "false"
+          }
+        ],
+        "resources": {
+          "limits": {
+            "memory": "256Mi"
+          }
+        }
+      },
+      "target": {
+        "minikube": {}
+      },
+      "watch": true
+    }
+  ]
+}

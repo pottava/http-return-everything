@@ -12,10 +12,12 @@ $ docker-compose -f dev/tools.yml run --rm codegen
 $ docker-compose -f dev/tools.yml run --rm vendor
 ```
 
-## Run the application
+## To edit OpenAPI spec
 
 ```
-$ docker-compose -f dev/runtime.yml up
+$ docker-compose -f dev/openapi.yml up
 ```
 
-Now you can get a '200 OK' response from `http://localhost:8080` .
+## Run the application as a Cloud Run service
+
+According to [Debugging your Cloud Run service](https://cloud.google.com/code/docs/vscode/debugging-a-cloud-run-app), you can get a '200 OK' response from `http://localhost:8080`.
