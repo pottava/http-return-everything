@@ -18,6 +18,8 @@ $ docker-compose -f dev/tools.yml run --rm vendor
 $ docker-compose -f dev/openapi.yml up
 ```
 
-## Run the application as a Cloud Run service
+## Run the application
 
-According to [Debugging your Cloud Run service](https://cloud.google.com/code/docs/vscode/debugging-a-cloud-run-app), you can get a '200 OK' response from `http://localhost:8080`.
+```
+$ docker-compose -f dev/runtime.yml up
+```

@@ -1,0 +1,30 @@
+# Config file for [Air](https://github.com/cosmtrek/air) in TOML format
+
+root = "."
+tmp_dir = "tmp"
+
+[build]
+cmd = 'CGO_ENABLED=0 go build -gcflags "all=-N -l" -o tmp/app generated/cmd/return-everything-server/main.go'
+bin = "tmp/app"
+full_bin = "dlv exec tmp/app --headless=true --listen=:2345 --api-version=2 --continue --accept-multiclient -- --host 0.0.0.0 --port 8080"
+include_ext = ["go"]
+exclude_dir = ["tmp", "vendor", "generated"]
+include_dir = []
+exclude_file = []
+log = "air.log"
+delay = 1000 # ms
+stop_on_error = true
+send_interrupt = false
+kill_delay = 500 # ms
+
+[log]
+time = false
+
+[color]
+main = "magenta"
+watcher = "cyan"
+build = "yellow"
+runner = "green"
+
+[misc]
+clean_on_exit = true

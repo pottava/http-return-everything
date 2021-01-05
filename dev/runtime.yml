@@ -1,0 +1,26 @@
+version: "2.4"
+
+services:
+  # docker-compose -f dev/runtime.yml up
+  api:
+    image: delve:v1.0.0
+    build: .
+    command: air -c .air.toml
+    ports:
+      - 8080:8080
+      - 2345:2345
+    environment:
+      - ACCESS_LOG
+      - ACCESS_DETAIL_LOG
+      - CONTENT_ENCODING
+      - CORS_ORIGIN=*
+      - ENABLE_AWS=false
+      - ENABLE_GCP=false
+    volumes:
+      - ..:/go/src/github.com/pottava/http-return-everything
+    working_dir: /go/src/github.com/pottava/http-return-everything/app
+    security_opt:
+      - apparmor:unconfined
+    cap_add:
+      - SYS_PTRACE
+    container_name: api

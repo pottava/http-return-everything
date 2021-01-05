@@ -1,39 +1,15 @@
 {
+  "version": "0.2.0",
   "configurations": [
-    {
-      "name": "Cloud Run: Run/Debug Locally",
-      "type": "cloudcode.cloudrun",
-      "request": "launch",
-      "build": {
-        "buildpacks": {
-          "path": "app/go.mod",
-          "builder": "gcr.io/buildpacks/builder:v1"
-        }
-      },
-      "image": "http-return-everything",
-      "service": {
-        "name": "http-re",
-        "containerPort": 8080,
-        "env": [
-          {
-            "name": "ENABLE_AWS",
-            "value": "false"
-          },
-          {
-            "name": "ENABLE_GCP",
-            "value": "false"
-          }
-        ],
-        "resources": {
-          "limits": {
-            "memory": "256Mi"
-          }
-        }
-      },
-      "target": {
-        "minikube": {}
-      },
-      "watch": true
-    }
+      {
+          "name": "Debug",
+          "type": "go",
+          "request": "launch",
+          "mode": "remote",
+          "remotePath": "/go/src/github.com/pottava/http-return-everything/app",
+          "program": "/Users/rnakamaru/src/github.com/pottava/http-return-everything/app",
+          "host": "localhost",
+          "port": 2345
+      }
   ]
 }
