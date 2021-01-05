@@ -20,4 +20,11 @@ $ docker-compose -f dev/openapi.yml up
 
 ## Run the application as a Cloud Run service
 
-According to [Debugging your Cloud Run service](https://cloud.google.com/code/docs/vscode/debugging-a-cloud-run-app), you can get a '200 OK' response from `http://localhost:8080`.
+Reopen VSCode [in a container](https://code.visualstudio.com/docs/remote/containers).
+
+```
+$ cd app
+$ air -c .air.toml
+```
+
+Now you can get a '200 OK' response from `http://localhost:8080`.
