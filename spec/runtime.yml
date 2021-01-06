@@ -1,0 +1,13 @@
+version: "2.4"
+
+services:
+  api:
+    image: golang:1.15.6-alpine3.12
+    command: go run generated/cmd/return-everything-server/main.go --host 0.0.0.0 --port 8080
+    environment:
+      - ENABLE_AWS=0
+      - ENABLE_GCP=0
+    volumes:
+      - ..:/go/src/github.com/pottava/http-return-everything
+    working_dir: /go/src/github.com/pottava/http-return-everything/app
+    container_name: api

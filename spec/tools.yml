@@ -14,4 +14,4 @@ services:
 networks:
   apps:
     external:
-      name: dev_default
+      name: spec_default
