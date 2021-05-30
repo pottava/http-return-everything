@@ -1,4 +1,4 @@
-FROM alpine:3.7
+FROM alpine:3
 
 ENV API_PORT=8080
 ADD entrypoint.sh /
