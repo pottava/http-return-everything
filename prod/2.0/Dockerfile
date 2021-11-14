@@ -20,7 +20,7 @@ RUN CGO_ENABLED=0 GOOS="${GOOS:-linux}" GOARCH="${GOARCH:-amd64}"; \
     go build -ldflags "${ldflags}" -o /app \
     generated/cmd/return-everything-server/main.go
 
-FROM alpine:3.12
+FROM alpine:3.13.6
 RUN apk --no-cache add tini ca-certificates
 COPY --from=builder /app /app
 ENV HOST=0.0.0.0 PORT=8080
